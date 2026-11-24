@@ -32,3 +32,18 @@
 - [x] Build HR Analytics Dashboard with KPI cards, Chart.js graphs (Department Distribution & 6-Month Attendance Trend), and 30-Day Contract Expiry Alert widget.
 - [x] Build Audit Log viewer page using `spatie/laravel-activitylog`.
 - [x] Write a comprehensive `README.md` with setup instructions, demo credentials, and Mermaid ERD diagram.
+
+## Phase 7: Production Readiness & Hardening
+- [x] Remove One-Click Demo Login UI, routes, and controller methods; enforce `throttle:5,1` rate limiting on login.
+- [x] Add `must_change_password` column to `users`, auto-generate copyable temporary password on employee creation, and enforce first-login password change via middleware.
+- [x] Build shared "Profil Saya" (`Shared\ProfileController`) for HR, Manager, and Employee to update phone, address, and password.
+- [x] Move dummy data generator to `DummyDataSeeder.php` and clean `DatabaseSeeder.php` for production baseline (`hr`/`manager`/`employee` roles, `Regular Office` shift, `admin@nashris.com` Super Admin HR).
+- [x] Run `php artisan migrate:fresh --seed` and update `README.md` & `docs/TASKS.md`.
+
+## Phase 8: Comprehensive Performance Optimization (Database, Backend, Frontend)
+- [x] Eliminasi N+1 Query & Eager Loading di seluruh Controller dan Service (relasi `user.roles`, `department`, `position`, `shift`, `manager.user`).
+- [x] Database Indexing & Pagination (`database/migrations/2026_11_25_000002_add_performance_indexes_to_core_tables.php`) dan standardisasi `paginate(15)->withQueryString()`.
+- [x] Caching data master (`departments_all`, `positions_all`, `shifts_all`) dan hasil agregasi analitik HR Dashboard (`hr_dashboard_analytics`, TTL 300 detik) dengan invalidasi otomatis via `Cache::forget()`.
+- [x] Optimasi memori Payroll Engine dengan chunking batch insert dan direct SQL aggregation (`SUM`/`COUNT` di database).
+- [x] Code-splitting Chart.js (dimuat terpisah via `@push('scripts')` hanya di HR Dashboard), memperkecil bundle global `app.js` menjadi 41 KB gzipped.
+- [x] Laravel Cache Optimization (`php artisan optimize`) dan 100% lulus 60 Feature/Unit tests.

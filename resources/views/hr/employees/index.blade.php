@@ -8,12 +8,12 @@
     <!-- Header & Filter Bar -->
     <div class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <!-- Filter Form -->
-        <form method="GET" action="{{ route('hr.employees.index') }}" class="flex flex-wrap items-center gap-2.5 flex-1">
+        <form method="GET" action="{{ route('hr.employees.index') }}" class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 flex-1">
             <!-- Keyword Search -->
-            <div class="relative min-w-[220px] flex-1">
+            <div class="relative min-w-0 sm:min-w-[220px] flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Cari nama, NIK, atau email..."
-                    class="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs bg-white" />
+                    class="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs bg-white min-h-[44px]" />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
@@ -21,7 +21,7 @@
 
             <!-- Department Filter -->
             <select name="department_id" onchange="this.form.submit()"
-                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs">
+                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
                 <option value="">Semua Departemen</option>
                 @foreach($departments as $dept)
                     <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
@@ -32,7 +32,7 @@
 
             <!-- Contract Filter -->
             <select name="contract_type" onchange="this.form.submit()"
-                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs">
+                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
                 <option value="">Semua Status Kontrak</option>
                 @foreach($contractTypes as $type)
                     <option value="{{ $type }}" {{ request('contract_type') == $type ? 'selected' : '' }}>
@@ -41,14 +41,23 @@
                 @endforeach
             </select>
 
-            @if(request()->hasAny(['department_id', 'contract_type', 'search']))
-                <a href="{{ route('hr.employees.index') }}" class="px-2.5 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium">Reset</a>
+            <!-- Role Filter -->
+            <select name="role" onchange="this.form.submit()"
+                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
+                <option value="">Semua Role</option>
+                <option value="manager" {{ request('role') == 'manager' ? 'selected' : '' }}>👔 Manager</option>
+                <option value="employee" {{ request('role') == 'employee' ? 'selected' : '' }}>👤 Employee</option>
+                <option value="hr" {{ request('role') == 'hr' ? 'selected' : '' }}>👑 HR Admin</option>
+            </select>
+
+            @if(request()->hasAny(['department_id', 'contract_type', 'role', 'search']))
+                <a href="{{ route('hr.employees.index') }}" class="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium self-center">Reset</a>
             @endif
         </form>
 
         <!-- Tambah Karyawan Button -->
         <a href="{{ route('hr.employees.create') }}"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/30 transition flex-shrink-0">
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/30 transition flex-shrink-0">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
             <span>Tambah Karyawan Baru</span>
         </a>
@@ -56,11 +65,12 @@
 
     <!-- Data Table Container -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3.5 px-6">Identitas Karyawan</th>
+                        <th class="py-3.5 px-4">Role Sistem</th>
                         <th class="py-3.5 px-6">Departemen & Jabatan</th>
                         <th class="py-3.5 px-4">Shift Kerja</th>
                         <th class="py-3.5 px-4">Status Kontrak</th>
@@ -87,6 +97,29 @@
                                         </div>
                                     </div>
                                 </div>
+                            </td>
+
+                            <!-- Role Sistem -->
+                            <td class="py-4 px-4 whitespace-nowrap">
+                                @php
+                                    $roleName = $emp->user->roles->first()?->name ?? 'employee';
+                                @endphp
+                                @if($roleName === 'hr')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                        HR Admin
+                                    </span>
+                                @elseif($roleName === 'manager')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                        Manager
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                        Employee
+                                    </span>
+                                @endif
                             </td>
 
                             <!-- Departemen & Jabatan -->
@@ -140,7 +173,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center">
+                            <td colspan="7" class="py-12 text-center">
                                 <x-empty-state title="Karyawan tidak ditemukan" description="Tidak ada data karyawan yang sesuai dengan kriteria filter atau pencarian Anda." />
                             </td>
                         </tr>

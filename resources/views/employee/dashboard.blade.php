@@ -57,7 +57,7 @@
                     @csrf
                     <button type="submit"
                         @if($todayAttendance && $todayAttendance->clock_in) disabled @endif
-                        class="w-full py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center justify-center gap-1.5
+                        class="w-full py-2.5 min-h-[44px] rounded-xl text-xs font-bold text-white transition flex items-center justify-center gap-1.5
                             {{ ($todayAttendance && $todayAttendance->clock_in)
                                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
                                 : 'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 active:scale-95' }}">
@@ -69,7 +69,7 @@
                     @csrf
                     <button type="submit"
                         @if(! $todayAttendance || ! $todayAttendance->clock_in || $todayAttendance->clock_out) disabled @endif
-                        class="w-full py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center justify-center gap-1.5
+                        class="w-full py-2.5 min-h-[44px] rounded-xl text-xs font-bold text-white transition flex items-center justify-center gap-1.5
                             {{ (! $todayAttendance || ! $todayAttendance->clock_in || $todayAttendance->clock_out)
                                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
                                 : 'bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 active:scale-95' }}">

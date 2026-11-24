@@ -18,6 +18,7 @@ class StoreEmployeeRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['nullable', 'string', 'min:6'],
+            'role' => ['nullable', 'string', 'in:employee,manager,hr'],
 
             // Employment Data
             'department_id' => ['required', 'exists:departments,id'],

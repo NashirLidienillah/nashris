@@ -67,9 +67,9 @@
 
     <!-- Attendance Table -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3 px-6">Tanggal</th>
                         <th class="py-3 px-4">Karyawan</th>

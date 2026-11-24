@@ -58,9 +58,9 @@
     <!-- Audit Log Table & Details Modal (Alpine.js) -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden"
          x-data="{ detailModalOpen: false, modalTitle: '', modalProps: '' }">
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3 px-6">Waktu Kejadian</th>
                         <th class="py-3 px-4">Pengguna / Aktor</th>
@@ -146,11 +146,11 @@
 
         <!-- JSON Diff Modal -->
         <div x-show="detailModalOpen" x-cloak
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div @click.away="detailModalOpen = false" class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200">
+             class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div @click.away="detailModalOpen = false" class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
                     <h3 class="text-sm font-bold text-slate-900" x-text="modalTitle">Rincian Perubahan Data</h3>
-                    <button type="button" @click="detailModalOpen = false" class="text-slate-400 hover:text-slate-600 p-1">&times;</button>
+                    <button type="button" @click="detailModalOpen = false" aria-label="Tutup" class="text-slate-400 hover:text-slate-600 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg">&times;</button>
                 </div>
 
                 <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-[11px] overflow-x-auto max-h-96">

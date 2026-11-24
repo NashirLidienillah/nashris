@@ -39,10 +39,21 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Kata Sandi Akun</label>
-                        <input type="text" name="password" value="{{ old('password', 'password') }}" placeholder="Default: password"
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Peran Akun Sistem (Role)</label>
+                        <select name="role" required
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            <option value="employee" {{ old('role', 'employee') === 'employee' ? 'selected' : '' }}>Employee (Staf Biasa / Akses ESS)</option>
+                            <option value="manager" {{ old('role') === 'manager' ? 'selected' : '' }}>Manager (Supervisi Divisi / Approval Cuti & Presensi)</option>
+                            <option value="hr" {{ old('role') === 'hr' ? 'selected' : '' }}>HR Administrator (Akses Penuh)</option>
+                        </select>
+                        <span class="block text-[10px] text-slate-400 mt-0.5">Pilih <strong>Manager</strong> jika karyawan ini bertindak sebagai supervisor tim atau kepala departemen.</span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Kata Sandi Sementara (Opsional)</label>
+                        <input type="text" name="password" value="{{ old('password') }}" placeholder="Kosongkan untuk generate otomatis"
                             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50" />
-                        <span class="block text-[10px] text-slate-400 mt-0.5">Biarkan jika ingin menggunakan default <code>password</code>.</span>
+                        <span class="block text-[10px] text-slate-400 mt-0.5">Jika dikosongkan, sistem akan membuat password sementara acak yang dapat Anda salin. Karyawan wajib menggantinya saat login pertama.</span>
                     </div>
 
                     <div class="md:col-span-2">
@@ -196,11 +207,11 @@
             </div>
 
             <!-- Submit Action -->
-            <div class="flex items-center justify-end gap-3 pt-2">
-                <a href="{{ route('hr.employees.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition">
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2">
+                <a href="{{ route('hr.employees.index') }}" class="px-5 py-2.5 min-h-[44px] flex items-center justify-center rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/30 transition">
+                <button type="submit" class="px-6 py-2.5 min-h-[44px] flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/30 transition">
                     Daftarkan Karyawan & Auto-Generate NIK
                 </button>
             </div>

@@ -5,7 +5,7 @@ use App\Http\Controllers\Manager\DashboardController as ManagerDashboardControll
 use App\Http\Controllers\Manager\LeaveApprovalController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
+Route::middleware(['auth', 'password.changed', 'role:manager'])->prefix('manager')->name('manager.')->group(function () {
     Route::get('/dashboard', ManagerDashboardController::class)->name('dashboard');
 
     // Team Attendance Monitoring

@@ -32,7 +32,7 @@ class AuditLogController extends Controller
             });
         }
 
-        $activities = $query->paginate(20)->withQueryString();
+        $activities = $query->paginate(15)->withQueryString();
         $logNames = Activity::distinct()->pluck('log_name')->filter()->values();
 
         return view('hr.audit-logs.index', compact('activities', 'logNames'));

@@ -7,6 +7,7 @@ use App\Models\PayrollItem;
 use App\Policies\PayrollItemPolicy;
 use App\Policies\PayrollPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,5 +27,14 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Payroll::class, PayrollPolicy::class);
         Gate::policy(PayrollItem::class, PayrollItemPolicy::class);
+
+        if (
+            request()->server('HTTP_X_FORWARDED_PROTO') === 'https' ||
+            request()->header('X-Forwarded-Proto') === 'https' ||
+            request()->isSecure() ||
+            app()->environment('production')
+        ) {
+            URL::forceScheme('https');
+        }
     }
 }

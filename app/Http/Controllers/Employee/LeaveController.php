@@ -34,7 +34,8 @@ class LeaveController extends Controller
         $leaves = LeaveRequest::with(['managerApprover', 'hrApprover'])
             ->where('employee_id', $employee->id)
             ->latest()
-            ->paginate(10);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('employee.leaves.index', compact('employee', 'leaveBalance', 'leaves'));
     }

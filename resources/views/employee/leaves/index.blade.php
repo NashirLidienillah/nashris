@@ -6,7 +6,7 @@
     </x-slot>
 
     <!-- Top Grid: Leave Balance Cards & Quick Action -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <x-stat-card title="Total Kuota Cuti" :value="$leaveBalance->total_quota . ' Hari'" icon="🗓️" color="indigo" subtitle="Tahun {{ date('Y') }}" />
         <x-stat-card title="Cuti Terpakai" :value="$leaveBalance->used_quota . ' Hari'" icon="📉" color="amber" subtitle="Telah disetujui HR" />
         <x-stat-card title="Sisa Saldo Cuti" :value="$leaveBalance->remaining_quota . ' Hari'" icon="🏖️" color="emerald" subtitle="Dapat diajukan" />
@@ -16,7 +16,7 @@
                 <span class="text-xs uppercase font-bold tracking-wider text-indigo-200">Perlu Libur / Izin?</span>
                 <h4 class="text-sm font-extrabold mt-1">Ajukan Permohonan Cuti Baru</h4>
             </div>
-            <a href="{{ route('employee.leaves.create') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-indigo-700 font-bold text-xs shadow hover:bg-indigo-50 transition active:scale-95">
+            <a href="{{ route('employee.leaves.create') }}" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-white text-indigo-700 font-bold text-xs shadow hover:bg-indigo-50 transition active:scale-95">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                 <span>Ajukan Cuti Baru</span>
             </a>
@@ -32,9 +32,9 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3 px-6">Jenis Cuti</th>
                         <th class="py-3 px-4">Rentang Tanggal</th>

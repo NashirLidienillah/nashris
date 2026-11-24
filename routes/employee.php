@@ -6,7 +6,7 @@ use App\Http\Controllers\Employee\LeaveController;
 use App\Http\Controllers\Employee\PayslipController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
+Route::middleware(['auth', 'password.changed', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
     Route::get('/dashboard', EmployeeDashboardController::class)->name('dashboard');
 
     // Attendance ESS (Clock-In & Clock-Out)

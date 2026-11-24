@@ -50,16 +50,16 @@
         <!-- Edit Modal Alpine -->
         <div x-show="editPosOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" @click="editPosOpen = false"></div>
-            <div class="flex min-h-full items-center justify-center p-4">
-                <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden relative">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+            <div class="flex min-h-full items-center justify-center p-3 sm:p-4">
+                <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex-shrink-0">
                         <h3 class="text-base font-bold text-slate-900">Ubah Data Jabatan</h3>
-                        <button type="button" @click="editPosOpen = false" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                        <button type="button" @click="editPosOpen = false" aria-label="Tutup" class="text-slate-400 hover:text-slate-600 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                     </div>
 
-                    <form :action="'{{ url('hr/positions') }}/' + activePos.id" method="POST" class="p-6 space-y-4">
+                    <form :action="'{{ url('hr/positions') }}/' + activePos.id" method="POST" class="p-6 space-y-4 overflow-y-auto">
                         @csrf
                         @method('PUT')
 
@@ -101,9 +101,9 @@
 
     <!-- Positions Table -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden" x-data>
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3.5 px-6">Jabatan / Role</th>
                         <th class="py-3.5 px-6">Departemen</th>

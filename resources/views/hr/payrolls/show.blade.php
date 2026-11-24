@@ -75,9 +75,9 @@
 
     <!-- Items Table -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3 px-6">Karyawan</th>
                         <th class="py-3 px-4">Departemen</th>
@@ -92,29 +92,29 @@
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($items as $item)
                         <tr class="hover:bg-slate-50/60 transition">
-                            <td class="py-3.5 px-6 font-medium text-slate-900">
+                            <td class="py-3.5 px-6 font-medium text-slate-900 whitespace-nowrap">
                                 <div class="font-bold">{{ $item->employee->user->name ?? '-' }}</div>
                                 <div class="text-[11px] text-slate-400 font-mono">{{ $item->employee->employee_code }} &bull; {{ $item->employee->position->title ?? '-' }}</div>
                             </td>
-                            <td class="py-3.5 px-4 font-semibold text-slate-800">
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 whitespace-nowrap">
                                 {{ $item->employee->department->name ?? '-' }}
                             </td>
-                            <td class="py-3.5 px-4 font-mono font-medium text-slate-800">
+                            <td class="py-3.5 px-4 font-mono font-medium text-slate-800 whitespace-nowrap">
                                 Rp {{ number_format($item->base_salary, 0, ',', '.') }}
                             </td>
-                            <td class="py-3.5 px-4 font-mono font-medium text-slate-800">
+                            <td class="py-3.5 px-4 font-mono font-medium text-slate-800 whitespace-nowrap">
                                 Rp {{ number_format($item->allowances, 0, ',', '.') }}
                             </td>
-                            <td class="py-3.5 px-4 font-mono font-semibold {{ $item->late_deduction > 0 ? 'text-rose-600' : 'text-slate-400' }}">
+                            <td class="py-3.5 px-4 font-mono font-semibold whitespace-nowrap {{ $item->late_deduction > 0 ? 'text-rose-600' : 'text-slate-400' }}">
                                 {{ $item->late_deduction > 0 ? '-Rp ' . number_format($item->late_deduction, 0, ',', '.') : '-' }}
                             </td>
-                            <td class="py-3.5 px-4 font-mono font-semibold {{ $item->absence_deduction > 0 ? 'text-rose-600' : 'text-slate-400' }}">
+                            <td class="py-3.5 px-4 font-mono font-semibold whitespace-nowrap {{ $item->absence_deduction > 0 ? 'text-rose-600' : 'text-slate-400' }}">
                                 {{ $item->absence_deduction > 0 ? '-Rp ' . number_format($item->absence_deduction, 0, ',', '.') : '-' }}
                             </td>
-                            <td class="py-3.5 px-4 font-mono font-extrabold text-indigo-700">
+                            <td class="py-3.5 px-4 font-mono font-extrabold text-indigo-700 whitespace-nowrap">
                                 Rp {{ number_format($item->net_salary, 0, ',', '.') }}
                             </td>
-                            <td class="py-3.5 px-6 text-right">
+                            <td class="py-3.5 px-6 text-right whitespace-nowrap">
                                 <a href="{{ route('hr.payrolls.pdf', $item) }}"
                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 hover:border-indigo-400 hover:text-indigo-600 text-xs font-semibold text-slate-700 bg-white transition shadow-2xs">
                                     <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>

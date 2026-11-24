@@ -45,20 +45,34 @@ class PayrollService
             $startDate = Carbon::create($year, $month, 1)->startOfMonth()->toDateString();
             $endDate = Carbon::create($year, $month, 1)->endOfMonth()->toDateString();
 
-            $employees = Employee::with(['user', 'department', 'position'])->get();
+            $now = Carbon::now();
+            $itemsToInsert = [];
 
-            foreach ($employees as $employee) {
-                $calculation = $this->calculateEmployeePayroll($employee, $startDate, $endDate);
+            Employee::chunk(100, function ($employees) use (&$itemsToInsert, $payroll, $startDate, $endDate, $now) {
+                foreach ($employees as $employee) {
+                    $calculation = $this->calculateEmployeePayroll($employee, $startDate, $endDate);
 
-                PayrollItem::create([
-                    'payroll_id' => $payroll->id,
-                    'employee_id' => $employee->id,
-                    'base_salary' => $calculation['base_salary'],
-                    'allowances' => $calculation['allowances'],
-                    'late_deduction' => $calculation['late_deduction'],
-                    'absence_deduction' => $calculation['absence_deduction'],
-                    'net_salary' => $calculation['net_salary'],
-                ]);
+                    $itemsToInsert[] = [
+                        'payroll_id' => $payroll->id,
+                        'employee_id' => $employee->id,
+                        'base_salary' => $calculation['base_salary'],
+                        'allowances' => $calculation['allowances'],
+                        'late_deduction' => $calculation['late_deduction'],
+                        'absence_deduction' => $calculation['absence_deduction'],
+                        'net_salary' => $calculation['net_salary'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+
+                if (count($itemsToInsert) >= 100) {
+                    PayrollItem::insert($itemsToInsert);
+                    $itemsToInsert = [];
+                }
+            });
+
+            if (! empty($itemsToInsert)) {
+                PayrollItem::insert($itemsToInsert);
             }
 
             return $payroll;
@@ -77,14 +91,16 @@ class PayrollService
         $dailyRate = $baseSalary / 22;
         $minuteRate = $dailyRate / 480;
 
-        $attendances = Attendance::where('employee_id', $employee->id)
+        // Direct SQL aggregation to avoid hydrating attendance models in memory
+        $attAgg = Attendance::where('employee_id', $employee->id)
             ->whereBetween('date', [$startDate, $endDate])
-            ->get();
+            ->selectRaw('COALESCE(SUM(late_minutes), 0) as total_late_minutes, COUNT(CASE WHEN status = "Absent" THEN 1 END) as total_absent_days')
+            ->first();
 
-        $totalLateMinutes = (int) $attendances->sum('late_minutes');
+        $totalLateMinutes = (int) ($attAgg->total_late_minutes ?? 0);
         $lateDeduction = round($totalLateMinutes * $minuteRate, 2);
 
-        $totalAbsentDays = (int) $attendances->where('status', 'Absent')->count();
+        $totalAbsentDays = (int) ($attAgg->total_absent_days ?? 0);
         $absenceDeduction = round($totalAbsentDays * $dailyRate, 2);
 
         $netSalary = ($baseSalary + $allowances) - ($lateDeduction + $absenceDeduction);

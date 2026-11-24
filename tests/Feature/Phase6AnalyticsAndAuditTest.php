@@ -21,6 +21,10 @@ class Phase6AnalyticsAndAuditTest extends TestCase
 
         Department::where('code', 'like', 'RND%')->delete();
 
+        if (User::where('email', 'hr@nashris.test')->doesntExist()) {
+            $this->seed(\Database\Seeders\DummyDataSeeder::class);
+        }
+
         $this->hrUser = User::where('email', 'hr@nashris.test')->first();
         $this->managerUser = User::where('email', 'manager.it@nashris.test')->first();
         $this->employeeUser = User::where('email', 'budi.santoso@nashris.test')->first();

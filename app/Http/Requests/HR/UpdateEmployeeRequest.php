@@ -21,6 +21,7 @@ class UpdateEmployeeRequest extends FormRequest
             // User Data
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
+            'role' => ['nullable', 'string', 'in:employee,manager,hr'],
 
             // Employment Data
             'department_id' => ['required', 'exists:departments,id'],

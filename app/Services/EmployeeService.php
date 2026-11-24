@@ -47,12 +47,14 @@ class EmployeeService
             $user = User::create([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'password' => Hash::make($userData['password'] ?? 'password'),
+                'password' => Hash::make($userData['password']),
                 'is_active' => true,
+                'must_change_password' => $userData['must_change_password'] ?? true,
             ]);
 
-            $employeeRole = Role::firstOrCreate(['name' => 'employee']);
-            $user->assignRole($employeeRole);
+            $roleName = $userData['role'] ?? 'employee';
+            $userRole = Role::firstOrCreate(['name' => $roleName]);
+            $user->syncRoles([$userRole]);
 
             // 2. Generate unique employee code & create Employee
             $employeeData['user_id'] = $user->id;
@@ -91,6 +93,11 @@ class EmployeeService
                 'name' => $userData['name'],
                 'email' => $userData['email'],
             ]);
+
+            if (! empty($userData['role'])) {
+                $role = Role::firstOrCreate(['name' => $userData['role']]);
+                $employee->user->syncRoles([$role]);
+            }
 
             $employee->update($employeeData);
 

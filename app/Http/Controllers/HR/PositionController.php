@@ -9,13 +9,14 @@ use App\Models\Department;
 use App\Models\Position;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class PositionController extends Controller
 {
     public function index(Request $request): View
     {
-        $departments = Department::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
 
         $query = Position::with(['department'])->withCount('employees')->latest();
 
@@ -28,7 +29,7 @@ class PositionController extends Controller
             $query->where('title', 'like', "%{$search}%");
         }
 
-        $positions = $query->paginate(12)->withQueryString();
+        $positions = $query->paginate(15)->withQueryString();
 
         return view('hr.positions.index', compact('positions', 'departments'));
     }
@@ -37,6 +38,9 @@ class PositionController extends Controller
     {
         Position::create($request->validated());
 
+        Cache::forget('positions_all');
+        Cache::forget('hr_dashboard_analytics');
+
         return redirect()->route('hr.positions.index')
             ->with('success', 'Jabatan baru berhasil didaftarkan.');
     }
@@ -44,6 +48,9 @@ class PositionController extends Controller
     public function update(UpdatePositionRequest $request, Position $position): RedirectResponse
     {
         $position->update($request->validated());
+
+        Cache::forget('positions_all');
+        Cache::forget('hr_dashboard_analytics');
 
         return redirect()->route('hr.positions.index')
             ->with('success', 'Data jabatan berhasil diperbarui.');
@@ -56,6 +63,9 @@ class PositionController extends Controller
         }
 
         $position->delete();
+
+        Cache::forget('positions_all');
+        Cache::forget('hr_dashboard_analytics');
 
         return redirect()->route('hr.positions.index')
             ->with('success', 'Jabatan berhasil dihapus dari sistem.');

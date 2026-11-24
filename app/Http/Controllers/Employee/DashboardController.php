@@ -12,7 +12,7 @@ class DashboardController extends Controller
     public function __invoke(): View
     {
         $user = auth()->user();
-        $employee = $user->employee?->load(['department', 'position', 'shift']);
+        $employee = $user->employee?->load(['department', 'position', 'shift', 'manager.user']);
 
         $today = Carbon::today()->toDateString();
         $todayAttendance = $employee ? Attendance::where('employee_id', $employee->id)->where('date', $today)->first() : null;

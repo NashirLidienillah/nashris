@@ -29,7 +29,7 @@ class DashboardController extends Controller
             'pending_approval' => LeaveRequest::whereIn('employee_id', $teamEmployees)->where('status', 'Pending Manager')->count(),
         ];
 
-        $pendingLeaves = LeaveRequest::with(['employee.position'])
+        $pendingLeaves = LeaveRequest::with(['employee.user', 'employee.position'])
             ->whereIn('employee_id', $teamEmployees)
             ->where('status', 'Pending Manager')
             ->latest()

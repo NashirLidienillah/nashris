@@ -10,7 +10,7 @@ use App\Http\Controllers\HR\PayrollController;
 use App\Http\Controllers\HR\PositionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'role:hr'])->prefix('hr')->name('hr.')->group(function () {
+Route::middleware(['auth', 'password.changed', 'role:hr'])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', HRDashboardController::class)->name('dashboard');
 
     // Master Data: Departments
@@ -43,7 +43,7 @@ Route::middleware(['auth', 'role:hr'])->prefix('hr')->name('hr.')->group(functio
 });
 
 // Employee Documents View & Download (Accessible by HR or Owner Employee, Anti-IDOR enforced by EmployeeDocumentPolicy)
-Route::middleware(['auth'])->prefix('hr')->name('hr.')->group(function () {
+Route::middleware(['auth', 'password.changed'])->prefix('hr')->name('hr.')->group(function () {
     Route::get('employees/{employee}/documents/{document}/view', [EmployeeController::class, 'viewDocument'])->name('employees.documents.view');
     Route::get('employees/{employee}/documents/{document}/download', [EmployeeController::class, 'downloadDocument'])->name('employees.documents.download');
 });

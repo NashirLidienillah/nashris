@@ -7,6 +7,33 @@
         <span class="text-slate-700">{{ $employee->employee_code }}</span>
     </x-slot>
 
+    @if(session('temp_password'))
+        <div x-data="{ copied: false, tempPass: @js(session('temp_password')) }"
+             class="mb-6 p-5 rounded-2xl bg-amber-50 border border-amber-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md bg-amber-200/80 text-amber-900 text-[10px] font-bold uppercase tracking-wider">Kredensial Sementara</span>
+                    <h3 class="text-sm font-bold text-amber-950">Akun Login Karyawan Siap Digunakan</h3>
+                </div>
+                <p class="text-xs text-amber-800">
+                    Salin dan berikan kata sandi sementara ini kepada karyawan. Karyawan akan diminta mengganti kata sandi saat pertama kali login.
+                </p>
+                <div class="flex items-center gap-2 pt-1">
+                    <span class="text-xs text-amber-900 font-medium">Email:</span>
+                    <code class="px-2 py-0.5 rounded bg-white border border-amber-200 text-xs font-mono font-bold text-slate-900">{{ $employee->user->email }}</code>
+                    <span class="text-xs text-amber-900 font-medium ml-2">Password:</span>
+                    <code class="px-2.5 py-0.5 rounded bg-white border border-amber-300 text-xs font-mono font-extrabold text-indigo-700 select-all">{{ session('temp_password') }}</code>
+                </div>
+            </div>
+            <button type="button"
+                    @click="navigator.clipboard.writeText(tempPass); copied = true; setTimeout(() => copied = false, 2500)"
+                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs transition flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                <span x-text="copied ? 'Tersalin!' : 'Salin Password'"></span>
+            </button>
+        </div>
+    @endif
+
     <!-- Top Profile Dossier Card -->
     <div class="p-6 lg:p-8 rounded-2xl bg-white border border-slate-200 shadow-xs mb-8">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -17,6 +44,22 @@
                 <div>
                     <div class="flex items-center gap-2.5">
                         <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $employee->user->name ?? '-' }}</h2>
+                        @php
+                            $roleName = $employee->user->roles->first()?->name ?? 'employee';
+                        @endphp
+                        @if($roleName === 'hr')
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                                👑 HR Admin
+                            </span>
+                        @elseif($roleName === 'manager')
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                                👔 Manager
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 border border-sky-200">
+                                👤 Employee
+                            </span>
+                        @endif
                         <x-status-badge :status="$employee->contract_type" />
                     </div>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500">
@@ -243,7 +286,7 @@
                             <span class="block text-[10px] text-slate-400 mt-1">Maks. 2MB (Format: PDF, JPG, PNG).</span>
                         </div>
 
-                        <button type="submit" class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition">
+                        <button type="submit" class="w-full py-2.5 min-h-[44px] flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition">
                             Unggah Dokumen
                         </button>
                     </form>

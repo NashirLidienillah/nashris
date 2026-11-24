@@ -24,7 +24,8 @@ class PayslipController extends Controller
             ->orderBy('payrolls.year', 'desc')
             ->orderBy('payrolls.month', 'desc')
             ->select('payroll_items.*')
-            ->paginate(12);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('employee.payslips.index', compact('employee', 'payslips'));
     }

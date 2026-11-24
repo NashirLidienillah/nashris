@@ -38,7 +38,7 @@
             <div class="mt-12 lg:mt-20">
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Versi 1.0 — Desktop-First Web App
+                    Versi 1.3 - Ready to Production
                 </span>
                 <h1 class="mt-4 text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
                     Sistem Tata Kelola SDM Terintegrasi & Andal
@@ -78,7 +78,7 @@
         </div>
 
         <div class="relative z-10 mt-8 pt-6 border-t border-indigo-700/50 text-xs text-indigo-300/70 flex justify-between items-center">
-            <span>&copy; {{ date('Y') }} NasHRIS. All rights reserved.</span>
+            <span>&copy; {{ date('Y') }} Muhammad Nashir Lidienillah. All rights reserved.</span>
             <span>Enterprise Edition</span>
         </div>
     </div>
@@ -163,89 +163,15 @@
                         <input type="checkbox" name="remember" value="1" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 transition">
                         <span class="text-xs font-medium text-slate-600">Ingat Saya</span>
                     </label>
-                    <span class="text-xs text-slate-400">Default password: <code class="font-mono text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded">password</code></span>
+                    <span class="text-xs text-slate-400">Default: <code class="font-mono text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded">password123</code></span>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 transition duration-150 flex items-center justify-center gap-2">
+                <button type="submit" class="w-full py-3 min-h-[44px] px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 transition duration-150 flex items-center justify-center gap-2">
                     <span>Masuk ke NasHRIS</span>
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
             </form>
-
-            <!-- Divider -->
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
-                <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-50 px-3 text-slate-400 font-semibold tracking-wider">Akses Cepat Demo</span></div>
-            </div>
-
-            <!-- ONE-CLICK DEMO LOGIN BUTTONS -->
-            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm space-y-2.5">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">⚡ Demo Login Sekali Klik</span>
-                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Siap Uji</span>
-                </div>
-
-                <!-- 1. Login as HR Admin -->
-                <form action="{{ route('login.demo') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="role" value="hr">
-                    <button type="submit" class="w-full p-2.5 rounded-xl border border-indigo-200 hover:border-indigo-400 bg-indigo-50/60 hover:bg-indigo-50 text-left transition duration-150 flex items-center justify-between group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm group-hover:scale-105 transition">
-                                👑
-                            </div>
-                            <div>
-                                <div class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Login as HR Admin</div>
-                                <div class="text-[11px] text-slate-500 font-mono">hr@nashris.test</div>
-                            </div>
-                        </div>
-                        <span class="text-xs font-semibold text-indigo-600 bg-white border border-indigo-200 px-2.5 py-1 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition">
-                            Masuk &rarr;
-                        </span>
-                    </button>
-                </form>
-
-                <!-- 2. Login as Manager -->
-                <form action="{{ route('login.demo') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="role" value="manager">
-                    <button type="submit" class="w-full p-2.5 rounded-xl border border-amber-200 hover:border-amber-400 bg-amber-50/60 hover:bg-amber-50 text-left transition duration-150 flex items-center justify-between group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-sm group-hover:scale-105 transition">
-                                👔
-                            </div>
-                            <div>
-                                <div class="text-xs font-bold text-slate-900 group-hover:text-amber-700 transition">Login as Manager</div>
-                                <div class="text-[11px] text-slate-500 font-mono">manager.it@nashris.test</div>
-                            </div>
-                        </div>
-                        <span class="text-xs font-semibold text-amber-700 bg-white border border-amber-200 px-2.5 py-1 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition">
-                            Masuk &rarr;
-                        </span>
-                    </button>
-                </form>
-
-                <!-- 3. Login as Employee -->
-                <form action="{{ route('login.demo') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="role" value="employee">
-                    <button type="submit" class="w-full p-2.5 rounded-xl border border-sky-200 hover:border-sky-400 bg-sky-50/60 hover:bg-sky-50 text-left transition duration-150 flex items-center justify-between group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm group-hover:scale-105 transition">
-                                👤
-                            </div>
-                            <div>
-                                <div class="text-xs font-bold text-slate-900 group-hover:text-sky-700 transition">Login as Employee</div>
-                                <div class="text-[11px] text-slate-500 font-mono">budi.santoso@nashris.test</div>
-                            </div>
-                        </div>
-                        <span class="text-xs font-semibold text-sky-700 bg-white border border-sky-200 px-2.5 py-1 rounded-lg group-hover:bg-sky-600 group-hover:text-white transition">
-                            Masuk &rarr;
-                        </span>
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 </div>

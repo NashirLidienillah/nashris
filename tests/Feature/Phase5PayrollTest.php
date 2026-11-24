@@ -26,6 +26,10 @@ class Phase5PayrollTest extends TestCase
     {
         parent::setUp();
 
+        if (User::where('email', 'hr@nashris.test')->doesntExist()) {
+            $this->seed(\Database\Seeders\DummyDataSeeder::class);
+        }
+
         $this->hrUser = User::where('email', 'hr@nashris.test')->first();
         $this->managerUser = User::where('email', 'manager.it@nashris.test')->first();
         $this->budiUser = User::where('email', 'budi.santoso@nashris.test')->first();

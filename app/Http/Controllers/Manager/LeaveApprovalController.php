@@ -34,7 +34,7 @@ class LeaveApprovalController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        $leaves = $query->latest()->paginate(12)->withQueryString();
+        $leaves = $query->latest()->paginate(15)->withQueryString();
 
         return view('manager.leaves.index', compact('managerEmp', 'department', 'leaves'));
     }

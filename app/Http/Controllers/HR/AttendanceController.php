@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -22,7 +23,7 @@ class AttendanceController extends Controller
 
     public function index(Request $request): View
     {
-        $departments = Department::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
 
         $startDate = $request->input('start_date', Carbon::today()->startOfMonth()->toDateString());
         $endDate = $request->input('end_date', Carbon::today()->toDateString());
@@ -46,7 +47,7 @@ class AttendanceController extends Controller
             });
         }
 
-        $attendances = $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
+        $attendances = $query->orderBy('date', 'desc')->paginate(15)->withQueryString();
 
         return view('hr.attendance.index', compact('departments', 'attendances', 'startDate', 'endDate'));
     }
@@ -57,6 +58,8 @@ class AttendanceController extends Controller
 
         try {
             $this->attendanceService->correctAttendance($attendance, $request->validated());
+
+            Cache::forget('hr_dashboard_analytics');
 
             return back()->with('success', "Koreksi data presensi tanggal {$attendance->date->format('d/m/Y')} ({$attendance->employee->user->name}) berhasil disimpan.");
         } catch (Exception $e) {

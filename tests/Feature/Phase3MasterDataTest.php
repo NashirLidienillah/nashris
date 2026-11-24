@@ -24,6 +24,10 @@ class Phase3MasterDataTest extends TestCase
 
         Department::where('code', 'like', 'OPS%')->orWhere('code', 'like', 'RND%')->delete();
 
+        if (User::where('email', 'hr@nashris.test')->doesntExist()) {
+            $this->seed(\Database\Seeders\DummyDataSeeder::class);
+        }
+
         $this->hrUser = User::where('email', 'hr@nashris.test')->first();
         $this->managerUser = User::where('email', 'manager.it@nashris.test')->first();
         $this->employeeUser = User::where('email', 'budi.santoso@nashris.test')->first();
@@ -162,5 +166,77 @@ class Phase3MasterDataTest extends TestCase
         // Regular employee receives 403 Forbidden
         $response = $this->actingAs($this->employeeUser)->get(route('hr.employees.create'));
         $response->assertStatus(403);
+    }
+
+    public function test_hr_can_create_employee_with_custom_role_such_as_manager(): void
+    {
+        $dept = Department::first();
+        $pos = Position::first();
+        $shift = Shift::first();
+
+        $randomEmail = 'new.manager.' . rand(1000, 9999) . '@nashris.test';
+
+        $response = $this->actingAs($this->hrUser)->post(route('hr.employees.store'), [
+            'name' => 'New Promoted Manager',
+            'email' => $randomEmail,
+            'role' => 'manager',
+            'phone' => '081288887777',
+            'address' => 'Jl. Kebon Jeruk No. 89, Jakarta Barat',
+            'department_id' => $dept->id,
+            'position_id' => $pos->id,
+            'shift_id' => $shift->id,
+            'join_date' => '2026-11-20',
+            'contract_type' => 'PKWTT',
+            'base_salary' => 18000000,
+            'allowance_fixed' => 2000000,
+        ]);
+
+        $newEmp = Employee::whereHas('user', fn($q) => $q->where('email', $randomEmail))->first();
+        $this->assertNotNull($newEmp);
+        $this->assertTrue($newEmp->user->hasRole('manager'));
+        $this->assertFalse($newEmp->user->hasRole('employee'));
+    }
+
+    public function test_hr_can_update_and_promote_employee_role(): void
+    {
+        $emp = Employee::where('employee_code', 'EMP-2026-006')->first(); // Budi Santoso (initially employee)
+        $this->assertTrue($emp->user->hasRole('employee'));
+
+        // Promote Budi to Manager
+        $response = $this->actingAs($this->hrUser)->put(route('hr.employees.update', $emp), [
+            'name' => $emp->user->name,
+            'email' => $emp->user->email,
+            'role' => 'manager',
+            'department_id' => $emp->department_id,
+            'position_id' => $emp->position_id,
+            'shift_id' => $emp->shift_id,
+            'phone' => $emp->phone,
+            'address' => $emp->address,
+            'join_date' => $emp->join_date->toDateString(),
+            'contract_type' => $emp->contract_type,
+            'base_salary' => $emp->base_salary,
+            'allowance_fixed' => $emp->allowance_fixed,
+        ]);
+
+        $response->assertRedirect(route('hr.employees.show', $emp));
+        $this->assertTrue($emp->fresh()->user->hasRole('manager'));
+        $this->assertFalse($emp->fresh()->user->hasRole('employee'));
+
+        // Revert back for safety
+        $emp->user->syncRoles(['employee']);
+    }
+
+    public function test_employee_directory_displays_role_badges_and_supports_role_filtering(): void
+    {
+        $response = $this->actingAs($this->hrUser)->get(route('hr.employees.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Role Sistem');
+        $response->assertSee('Manager');
+        $response->assertSee('Employee');
+
+        // Test filtering by manager
+        $responseFiltered = $this->actingAs($this->hrUser)->get(route('hr.employees.index', ['role' => 'manager']));
+        $responseFiltered->assertStatus(200);
+        $responseFiltered->assertSee('Manager');
     }
 }

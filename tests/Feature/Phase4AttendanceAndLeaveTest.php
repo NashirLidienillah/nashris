@@ -26,6 +26,10 @@ class Phase4AttendanceAndLeaveTest extends TestCase
     {
         parent::setUp();
 
+        if (User::where('email', 'hr@nashris.test')->doesntExist()) {
+            $this->seed(\Database\Seeders\DummyDataSeeder::class);
+        }
+
         $this->hrUser = User::where('email', 'hr@nashris.test')->first();
         $this->itManagerUser = User::where('email', 'manager.it@nashris.test')->first();
         $this->financeManagerUser = User::where('email', 'manager.fin@nashris.test')->first();

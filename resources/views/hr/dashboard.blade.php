@@ -39,7 +39,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8"
          x-data="{
              initCharts() {
-                 if (typeof Chart === 'undefined') return;
+                 if (typeof Chart === 'undefined') {
+                     window.addEventListener('chart-loaded', () => this.initCharts(), { once: true });
+                     return;
+                 }
 
                  // 1. Department Distribution Doughnut
                  const ctxDept = document.getElementById('deptChart');
@@ -254,4 +257,8 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        @vite('resources/js/chart.js')
+    @endpush
 </x-app-layout>

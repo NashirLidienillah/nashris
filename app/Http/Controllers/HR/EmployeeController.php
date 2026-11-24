@@ -14,8 +14,10 @@ use App\Models\Shift;
 use App\Services\EmployeeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -27,10 +29,10 @@ class EmployeeController extends Controller
 
     public function index(Request $request): View
     {
-        $departments = Department::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
         $contractTypes = ['PKWTT', 'PKWT', 'Probation', 'Internship'];
 
-        $query = Employee::with(['user', 'department', 'position', 'shift'])->orderBy('employee_code', 'asc');
+        $query = Employee::with(['user.roles', 'department', 'position', 'shift'])->orderBy('employee_code', 'asc');
 
         // Department Filter
         if ($request->filled('department_id')) {
@@ -40,6 +42,11 @@ class EmployeeController extends Controller
         // Contract Filter
         if ($request->filled('contract_type')) {
             $query->where('contract_type', $request->input('contract_type'));
+        }
+
+        // Role Filter
+        if ($request->filled('role')) {
+            $query->whereHas('user.roles', fn($q) => $q->where('name', $request->input('role')));
         }
 
         // Keyword Search (Name, Code, Email)
@@ -54,16 +61,16 @@ class EmployeeController extends Controller
             });
         }
 
-        $employees = $query->paginate(12)->withQueryString();
+        $employees = $query->paginate(15)->withQueryString();
 
         return view('hr.employees.index', compact('employees', 'departments', 'contractTypes'));
     }
 
     public function create(): View
     {
-        $departments = Department::orderBy('name')->get();
-        $positions = Position::orderBy('title')->get();
-        $shifts = Shift::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
+        $positions = Cache::remember('positions_all', 600, fn() => Position::orderBy('title')->get());
+        $shifts = Cache::remember('shifts_all', 600, fn() => Shift::orderBy('name')->get());
         $managers = Employee::with(['user', 'department'])->get();
 
         return view('hr.employees.create', compact('departments', 'positions', 'shifts', 'managers'));
@@ -73,10 +80,16 @@ class EmployeeController extends Controller
     {
         $validated = $request->validated();
 
+        $tempPassword = ! empty($validated['password'])
+            ? $validated['password']
+            : Str::password(10, letters: true, numbers: true, symbols: false, spaces: false);
+
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => $validated['password'] ?? 'password',
+            'password' => $tempPassword,
+            'role' => $validated['role'] ?? 'employee',
+            'must_change_password' => true,
         ];
 
         $employeeData = [
@@ -102,8 +115,11 @@ class EmployeeController extends Controller
 
         $employee = $this->employeeService->createEmployee($userData, $employeeData, $documents);
 
+        Cache::forget('hr_dashboard_analytics');
+
         return redirect()->route('hr.employees.show', $employee)
-            ->with('success', "Karyawan {$employee->user->name} ({$employee->employee_code}) berhasil didaftarkan ke sistem.");
+            ->with('success', "Karyawan {$employee->user->name} ({$employee->employee_code}) berhasil didaftarkan ke sistem.")
+            ->with('temp_password', $tempPassword);
     }
 
     public function show(Employee $employee): View
@@ -111,7 +127,7 @@ class EmployeeController extends Controller
         Gate::authorize('view', $employee);
 
         $employee->load([
-            'user',
+            'user.roles',
             'department',
             'position',
             'manager.user',
@@ -128,9 +144,9 @@ class EmployeeController extends Controller
     {
         Gate::authorize('update', $employee);
 
-        $departments = Department::orderBy('name')->get();
-        $positions = Position::orderBy('title')->get();
-        $shifts = Shift::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
+        $positions = Cache::remember('positions_all', 600, fn() => Position::orderBy('title')->get());
+        $shifts = Cache::remember('shifts_all', 600, fn() => Shift::orderBy('name')->get());
         $managers = Employee::with('user')->where('id', '!=', $employee->id)->get();
 
         return view('hr.employees.edit', compact('employee', 'departments', 'positions', 'shifts', 'managers'));
@@ -145,6 +161,7 @@ class EmployeeController extends Controller
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'role' => $validated['role'] ?? 'employee',
         ];
 
         $employeeData = [
@@ -163,6 +180,8 @@ class EmployeeController extends Controller
 
         $this->employeeService->updateEmployee($employee, $userData, $employeeData);
 
+        Cache::forget('hr_dashboard_analytics');
+
         return redirect()->route('hr.employees.show', $employee)
             ->with('success', 'Data karyawan berhasil diperbarui.');
     }
@@ -175,6 +194,8 @@ class EmployeeController extends Controller
 
         // Cleanly delete employee & user
         $employee->user()->delete();
+
+        Cache::forget('hr_dashboard_analytics');
 
         return redirect()->route('hr.employees.index')
             ->with('success', "Karyawan {$name} telah berhasil dihapus dari sistem.");

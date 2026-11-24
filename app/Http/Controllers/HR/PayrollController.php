@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -29,7 +30,8 @@ class PayrollController extends Controller
             ->withSum('items as total_net_salary', 'net_salary')
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
-            ->paginate(10);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('hr.payrolls.index', compact('payrolls'));
     }
@@ -56,7 +58,7 @@ class PayrollController extends Controller
     {
         Gate::authorize('viewBatch', $payroll);
 
-        $departments = Department::orderBy('name')->get();
+        $departments = Cache::remember('departments_all', 600, fn() => Department::orderBy('name')->get());
 
         $query = $payroll->items()->with(['employee.user', 'employee.department', 'employee.position']);
 
@@ -72,13 +74,17 @@ class PayrollController extends Controller
             });
         }
 
-        $items = $query->paginate(20)->withQueryString();
+        $items = $query->paginate(15)->withQueryString();
+
+        $agg = $payroll->items()
+            ->selectRaw('COALESCE(SUM(base_salary + allowances), 0) as gross, COALESCE(SUM(late_deduction), 0) as late, COALESCE(SUM(absence_deduction), 0) as absence, COALESCE(SUM(net_salary), 0) as net')
+            ->first();
 
         $totals = [
-            'gross' => $payroll->items->sum(fn($i) => (float) $i->base_salary + (float) $i->allowances),
-            'late' => $payroll->items->sum(fn($i) => (float) $i->late_deduction),
-            'absence' => $payroll->items->sum(fn($i) => (float) $i->absence_deduction),
-            'net' => $payroll->items->sum(fn($i) => (float) $i->net_salary),
+            'gross' => (float) ($agg->gross ?? 0),
+            'late' => (float) ($agg->late ?? 0),
+            'absence' => (float) ($agg->absence ?? 0),
+            'net' => (float) ($agg->net ?? 0),
         ];
 
         return view('hr.payrolls.show', compact('payroll', 'items', 'departments', 'totals'));

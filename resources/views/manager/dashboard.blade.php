@@ -38,9 +38,9 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="w-full overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold">
+                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold whitespace-nowrap">
                     <tr>
                         <th class="py-3 px-6">Nama Karyawan</th>
                         <th class="py-3 px-4">Tipe Cuti</th>

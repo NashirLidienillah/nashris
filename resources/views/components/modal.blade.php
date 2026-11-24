@@ -36,7 +36,7 @@
          class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
 
     <!-- Dialog Card -->
-    <div class="flex min-h-full items-center justify-center p-4">
+    <div class="flex min-h-full items-center justify-center p-3 sm:p-4">
         <div x-show="open"
              x-transition:enter="ease-out duration-200"
              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -44,18 +44,18 @@
              x-transition:leave="ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="w-full {{ $maxWidthClass }} bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden relative">
+             class="w-full {{ $maxWidthClass }} mx-auto max-h-[90vh] flex flex-col bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden relative">
 
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex-shrink-0">
                 <h3 class="text-base font-bold text-slate-900">{{ $title }}</h3>
-                <button type="button" @click="open = false" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition">
+                <button type="button" @click="open = false" aria-label="Tutup Modal" class="text-slate-400 hover:text-slate-600 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg transition">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
 
             <!-- Modal Body -->
-            <div class="p-6">
+            <div class="p-6 overflow-y-auto">
                 {{ $slot }}
             </div>
         </div>

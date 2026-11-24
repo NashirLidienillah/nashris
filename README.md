@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white" alt="Alpine.js" />
   <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL 8.0" />
-  <img src="https://img.shields.io/badge/Tests-44%20Passed%20(139%20Assertions)-success?style=for-the-badge" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-57%20Passed%20(166%20Assertions)-success?style=for-the-badge" alt="Tests" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
@@ -22,12 +22,15 @@ Dikembangkan secara monolitik menggunakan **Laravel 13**, **Tailwind CSS**, dan 
 
 ## 2. Fitur Utama & Keunggulan Arsitektur
 
-### 🔐 1. Role-Based Access Control (RBAC) & One-Click Demo
+### 🔐 1. Role-Based Access Control (RBAC) & Keamanan Autentikasi Produksi
 - **3 Peran Pengguna Utama:**
   - **Super Admin / HR (`hr`):** Akses penuh pengelolaan master data, direktori karyawan, persetujuan cuti tahap final, generator payroll bulanan, analytics dashboard, dan audit log.
   - **Department Manager (`manager`):** Supervisi presensi tim divisi dan peninjau pengajuan cuti tahap 1 (*Pending Manager* &rarr; *Pending HR*).
   - **Employee Self-Service (`employee`):** Portal mandiri karyawan untuk Clock-In/Out harian, pengajuan cuti berlampiran, pemantauan saldo kuota cuti, dan unduh slip gaji PDF.
-- **One-Click Demo Login:** Tombol akses instan di halaman login untuk eksplorasi setiap peran tanpa perlu registrasi manual.
+- **Autentikasi Produksi & Manajemen Password:**
+  - Login standar email & password dilindungi *rate limiting* (`throttle:5,1`).
+  - Pembuatan akun karyawan oleh HR otomatis men-generate *temporary password* yang dapat langsung disalin HR dan menandai `must_change_password = true`, sehingga karyawan wajib mengganti kata sandi pada login pertama kali.
+  - Halaman **Profil Saya** tersedia untuk seluruh peran (HR, Manager, Employee) guna memperbarui nomor HP, alamat domisili, dan kata sandi secara mandiri.
 
 ### 🏢 2. Master Data & Direktori Karyawan Lengkap
 - **Departemen & Jabatan:** Pengaturan struktur divisi dan batas gaji pokok default dengan proteksi integritas relasi foreign key.
@@ -114,6 +117,7 @@ erDiagram
         string email UK
         string password
         boolean is_active
+        boolean must_change_password
         timestamps timestamps
     }
 
@@ -223,18 +227,17 @@ erDiagram
 
 ---
 
-## 4. Kredensial Akun Demo (Demo Credentials)
+## 4. Kredensial Akun Utama (Production Baseline)
 
-Gunakan tombol **One-Click Demo Login** di halaman `/login` atau gunakan kredensial berikut:
+Setelah menjalankan `php artisan migrate:fresh --seed`, sistem membuat 1 akun untuk masing-masing peran (*role*) utama:
 
-| Peran (Role) | Nama Pengguna | Alamat Email | Password | Hak Akses Utama |
+| Peran (Role) | Nama Pengguna | Alamat Email | Password Awal | Keterangan / Hak Akses |
 | :--- | :--- | :--- | :--- | :--- |
-| **HR Administrator** | Siti Rahmawati | `hr@nashris.test` | `password` | Master Data, Payroll, HR Approval, Analytics, Audit Log |
-| **Manager IT** | Bambang Wijaya | `manager.it@nashris.test` | `password` | Supervisi Presensi IT, Review Cuti Tahap 1 Tim IT |
-| **Manager Finance** | Hendra Gunawan | `manager.fin@nashris.test` | `password` | Supervisi Presensi & Review Cuti Tim Finance |
-| **Manager HR** | Rina Marlina | `manager.hr@nashris.test` | `password` | Supervisi Presensi & Review Cuti Tim HR |
-| **Manager Marketing** | Dewi Lestari | `manager.mkt@nashris.test` | `password` | Supervisi Presensi & Review Cuti Tim Marketing |
-| **Staff Employee** | Budi Santoso | `budi.santoso@nashris.test` | `password` | Clock-In/Out ESS, Pengajuan Cuti, Unduh Slip Gaji |
+| **Super Admin HR** | Super Admin HR | `admin@nashris.com` | `password123` | Akses penuh Master Data, Karyawan, Payroll, Analytics, Audit Log |
+| **Manager** | Bambang Wijaya | `manager@nashris.com` | `password123` | Manager IT Engineering: Approval cuti & monitoring tim divisi |
+| **Employee** | Muhammad Nashir Lidienillah | `nashir@gmail.com` | `password123` | Fullstack Developer (IT): ESS, Absensi mandiri, Pengajuan Cuti, Slip Gaji |
+
+> **Catatan Keamanan:** Segera ubah kata sandi melalui menu **Profil Saya** setelah login pertama kali pada environment produksi. Jika Anda membutuhkan 30+ data dummy untuk simulasi lokal, jalankan `php artisan db:seed --class=DummyDataSeeder`.
 
 ---
 
@@ -286,11 +289,15 @@ Gunakan tombol **One-Click Demo Login** di halaman `/login` atau gunakan kredens
    php artisan key:generate
    ```
 
-6. **Migrasi Database & Jalankan Realistic Seeder:**
-   Perintah ini akan membuat seluruh tabel, Spatie roles, 4 departemen, 10 jabatan, 2 shift, 35 karyawan lengkap dengan relasi keluarga & kontrak, saldo cuti, serta rekaman absensi realistis:
+6. **Migrasi Database & Jalankan Production Baseline Seeder:**
+   Perintah ini akan membuat seluruh tabel serta men-seed data baseline produksi (Spatie roles `hr`/`manager`/`employee`, 1 shift default `Regular Office 08:00-17:00`, dan 1 akun Super Admin HR utama):
    ```bash
    php artisan migrate:fresh --seed
    ```
+   - **Kredensial Super Admin HR Default:**
+     - Email: `admin@nashris.com`
+     - Password: `password123`
+   *(Opsional: Jika ingin mengisi data contoh/dummy untuk keperluan pengujian lokal, jalankan `php artisan db:seed --class=DummyDataSeeder`.)*
 
 7. **Jalankan Web Server Lokal:**
    ```bash
@@ -313,14 +320,15 @@ php artisan test
    PASS  Tests\Unit\ExampleTest
   ✓ that true is true
 
-   PASS  Tests\Feature\AuthTest (9 tests)
+   PASS  Tests\Feature\AuthTest (10 tests)
   ✓ root redirects to login for guests
-  ✓ login screen can be rendered
-  ✓ user can authenticate using the login screen
+  ✓ login screen can be rendered without demo buttons
+  ✓ demo login route is removed
+  ✓ super admin can authenticate using the login screen
   ✓ user cannot authenticate with invalid password
-  ✓ one click demo login as hr works
-  ✓ one click demo login as manager works
-  ✓ one click demo login as employee works
+  ✓ login is rate limited after five attempts
+  ✓ user with must change password is redirected and can update password
+  ✓ authenticated user can view and update profile and password
   ✓ user can logout
   ✓ dashboard requires authentication
 
@@ -368,8 +376,21 @@ php artisan test
   ✓ non hr cannot access analytics and audit logs
   ✓ model mutations automatically trigger activity logging
 
-  Tests:    44 passed (139 assertions)
-  Duration: 3.87s
+   PASS  Tests\Feature\SecurityAuditTest (12 tests)
+  ✓ employee cannot view another employees payslip
+  ✓ employee cannot download another employees payslip pdf
+  ✓ employee cannot view or download own payslip when payroll is draft
+  ✓ owner employee can view and download own paid payslip
+  ✓ employee cannot view or download another employees private document
+  ✓ manager cannot view private documents of employees
+  ✓ owner employee and hr can view and download own document
+  ✓ employee cannot view another employees leave attachment
+  ✓ owner employee their department manager and hr can view leave attachment
+  ✓ manager cannot approve leave of employee from different department
+  ✓ manager cannot reject leave of employee from different department
+  ✓ manager cannot filter attendance of employee outside department
+
+  Tests:    57 passed (166 assertions)
 ```
 
 ---

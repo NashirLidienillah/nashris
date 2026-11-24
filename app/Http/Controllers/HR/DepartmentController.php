@@ -8,6 +8,7 @@ use App\Http\Requests\HR\UpdateDepartmentRequest;
 use App\Models\Department;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class DepartmentController extends Controller
@@ -25,7 +26,7 @@ class DepartmentController extends Controller
             });
         }
 
-        $departments = $query->paginate(10)->withQueryString();
+        $departments = $query->paginate(15)->withQueryString();
 
         return view('hr.departments.index', compact('departments'));
     }
@@ -34,6 +35,9 @@ class DepartmentController extends Controller
     {
         Department::create($request->validated());
 
+        Cache::forget('departments_all');
+        Cache::forget('hr_dashboard_analytics');
+
         return redirect()->route('hr.departments.index')
             ->with('success', 'Departemen baru berhasil ditambahkan.');
     }
@@ -41,6 +45,9 @@ class DepartmentController extends Controller
     public function update(UpdateDepartmentRequest $request, Department $department): RedirectResponse
     {
         $department->update($request->validated());
+
+        Cache::forget('departments_all');
+        Cache::forget('hr_dashboard_analytics');
 
         return redirect()->route('hr.departments.index')
             ->with('success', 'Data departemen berhasil diperbarui.');
@@ -57,6 +64,9 @@ class DepartmentController extends Controller
         }
 
         $department->delete();
+
+        Cache::forget('departments_all');
+        Cache::forget('hr_dashboard_analytics');
 
         return redirect()->route('hr.departments.index')
             ->with('success', 'Departemen berhasil dihapus dari sistem.');
