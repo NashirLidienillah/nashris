@@ -16,7 +16,10 @@ class DashboardController extends Controller
         $managerEmp = $user->employee;
         $deptId = $managerEmp?->department_id;
 
-        $teamEmployees = $managerEmp ? $managerEmp->subordinates()->pluck('id') : collect();
+        // Strictly isolated to department team members (excluding manager)
+        $teamEmployees = $managerEmp
+            ? \App\Models\Employee::where('department_id', $deptId)->where('id', '!=', $managerEmp->id)->pluck('id')
+            : collect();
 
         $today = Carbon::today()->toDateString();
 

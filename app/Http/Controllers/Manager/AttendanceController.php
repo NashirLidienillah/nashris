@@ -35,7 +35,12 @@ class AttendanceController extends Controller
             ->whereBetween('date', [$startDate, $endDate]);
 
         if ($request->filled('employee_id')) {
-            $query->where('employee_id', $request->input('employee_id'));
+            $reqEmpId = (int) $request->input('employee_id');
+            // Anti-IDOR: verify requested employee belongs to manager's department
+            if (! $teamMembers->contains('id', $reqEmpId)) {
+                abort(403, 'Akses ditolak: Karyawan tidak berada di bawah divisi Anda.');
+            }
+            $query->where('employee_id', $reqEmpId);
         }
 
         if ($request->filled('status')) {

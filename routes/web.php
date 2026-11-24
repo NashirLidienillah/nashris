@@ -18,6 +18,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Secure Leave Attachment Viewer (Protected by LeaveRequestPolicy Anti-IDOR)
+    Route::get('/leaves/{leave}/attachment', [\App\Http\Controllers\Shared\LeaveAttachmentController::class, 'show'])->name('leaves.attachment');
+
     Route::get('/dashboard', function () {
         $user = auth()->user();
 

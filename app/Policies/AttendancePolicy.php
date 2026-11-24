@@ -26,13 +26,13 @@ class AttendancePolicy
         }
 
         if ($user->hasRole('manager')) {
-            return $user->employee && (
+            return $user->employee && $attendance->employee && (
                 $user->employee->department_id === $attendance->employee->department_id ||
                 $attendance->employee->manager_id === $user->employee->id
             );
         }
 
-        return $user->id === $attendance->employee->user_id;
+        return $attendance->employee && $user->id === $attendance->employee->user_id;
     }
 
     /**

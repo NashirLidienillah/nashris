@@ -117,13 +117,13 @@
                                 <button type="button"
                                         @click="editModalOpen = true;
                                                 editActionUrl = '{{ route('hr.attendance.update', $item) }}';
-                                                employeeName = '{{ addslashes($item->employee->user->name ?? '') }}';
+                                                employeeName = @js($item->employee->user->name ?? '');
                                                 attendanceDate = '{{ $item->date->format('d/m/Y') }}';
-                                                clockIn = '{{ $item->clock_in ?? '' }}';
-                                                clockOut = '{{ $item->clock_out ?? '' }}';
+                                                clockIn = @js($item->clock_in ?? '');
+                                                clockOut = @js($item->clock_out ?? '');
                                                 lateMinutes = {{ $item->late_minutes ?? 0 }};
-                                                status = '{{ $item->status }}';
-                                                notes = '{{ addslashes($item->notes ?? '') }}';"
+                                                status = @js($item->status);
+                                                notes = @js($item->notes ?? '');"
                                         class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-300 hover:border-indigo-400 hover:text-indigo-600 text-xs font-semibold text-slate-700 bg-white transition shadow-2xs">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                     <span>Koreksi</span>

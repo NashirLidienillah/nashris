@@ -17,7 +17,7 @@ class EmployeeDocumentPolicy
         }
 
         // Employee can only view their own document
-        return $user->id === $document->employee->user_id;
+        return $document->employee && $user->id === $document->employee->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class EmployeeDocumentPolicy
             return true;
         }
 
-        return $user->id === $document->employee->user_id;
+        return $document->employee && $user->id === $document->employee->user_id;
     }
 
     /**

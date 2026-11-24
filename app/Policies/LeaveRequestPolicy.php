@@ -25,13 +25,13 @@ class LeaveRequestPolicy
         }
 
         if ($user->hasRole('manager')) {
-            return $user->employee && (
+            return $user->employee && $leaveRequest->employee && (
                 $user->employee->department_id === $leaveRequest->employee->department_id ||
                 $leaveRequest->employee->manager_id === $user->employee->id
             );
         }
 
-        return $user->id === $leaveRequest->employee->user_id;
+        return $leaveRequest->employee && $user->id === $leaveRequest->employee->user_id;
     }
 
     /**
@@ -55,7 +55,7 @@ class LeaveRequestPolicy
             return false;
         }
 
-        return $user->employee && (
+        return $user->employee && $leaveRequest->employee && (
             $user->employee->department_id === $leaveRequest->employee->department_id ||
             $leaveRequest->employee->manager_id === $user->employee->id
         );

@@ -18,7 +18,7 @@ class PayrollItemPolicy
         }
 
         if ($user->hasRole('employee')) {
-            return $user->id === $item->employee->user_id && $item->payroll->status === 'Paid';
+            return $item->employee && $user->id === $item->employee->user_id && $item->payroll && $item->payroll->status === 'Paid';
         }
 
         return false;
@@ -34,7 +34,7 @@ class PayrollItemPolicy
         }
 
         if ($user->hasRole('employee')) {
-            return $user->id === $item->employee->user_id && $item->payroll->status === 'Paid';
+            return $item->employee && $user->id === $item->employee->user_id && $item->payroll && $item->payroll->status === 'Paid';
         }
 
         return false;

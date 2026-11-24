@@ -228,6 +228,10 @@ class EmployeeController extends Controller
 
     public function destroyDocument(Employee $employee, EmployeeDocument $document): RedirectResponse
     {
+        if ($document->employee_id !== $employee->id) {
+            abort(404);
+        }
+
         Gate::authorize('delete', $document);
 
         $type = $document->document_type;
