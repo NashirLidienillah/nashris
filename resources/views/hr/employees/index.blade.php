@@ -20,35 +20,46 @@
             </div>
 
             <!-- Department Filter -->
-            <select name="department_id" onchange="this.form.submit()"
-                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
-                <option value="">Semua Departemen</option>
-                @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
-                        {{ $dept->name }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="w-full sm:w-48">
+                <x-custom-select
+                    name="department_id"
+                    :options="$departments"
+                    valueKey="id"
+                    labelKey="name"
+                    placeholder="Semua Departemen"
+                    :value="request('department_id')"
+                    :submitOnChange="true"
+                    size="sm"
+                />
+            </div>
 
             <!-- Contract Filter -->
-            <select name="contract_type" onchange="this.form.submit()"
-                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
-                <option value="">Semua Status Kontrak</option>
-                @foreach($contractTypes as $type)
-                    <option value="{{ $type }}" {{ request('contract_type') == $type ? 'selected' : '' }}>
-                        {{ $type }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="w-full sm:w-48">
+                <x-custom-select
+                    name="contract_type"
+                    :options="$contractTypes"
+                    placeholder="Semua Status Kontrak"
+                    :value="request('contract_type')"
+                    :submitOnChange="true"
+                    size="sm"
+                />
+            </div>
 
             <!-- Role Filter -->
-            <select name="role" onchange="this.form.submit()"
-                class="px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs min-h-[44px]">
-                <option value="">Semua Role</option>
-                <option value="manager" {{ request('role') == 'manager' ? 'selected' : '' }}>👔 Manager</option>
-                <option value="employee" {{ request('role') == 'employee' ? 'selected' : '' }}>👤 Employee</option>
-                <option value="hr" {{ request('role') == 'hr' ? 'selected' : '' }}>👑 HR Admin</option>
-            </select>
+            <div class="w-full sm:w-40">
+                <x-custom-select
+                    name="role"
+                    :options="[
+                        'manager' => 'Manager',
+                        'employee' => 'Employee',
+                        'hr' => 'HR Admin'
+                    ]"
+                    placeholder="Semua Role"
+                    :value="request('role')"
+                    :submitOnChange="true"
+                    size="sm"
+                />
+            </div>
 
             @if(request()->hasAny(['department_id', 'contract_type', 'role', 'search']))
                 <a href="{{ route('hr.employees.index') }}" class="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 font-medium self-center">Reset</a>
@@ -161,12 +172,19 @@
                                     <span>Ubah</span>
                                 </a>
 
-                                <form action="{{ route('hr.employees.destroy', $emp) }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus karyawan {{ $emp->user->name }}? Data akun dan berkas juga akan dihapus.');">
+                                <form action="{{ route('hr.employees.destroy', $emp) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 bg-white transition shadow-2xs">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <button type="button"
+                                        @click="$dispatch('open-confirm', {
+                                            title: 'Hapus Karyawan',
+                                            message: 'Apakah Anda yakin ingin menghapus karyawan {{ $emp->user->name }} ({{ $emp->employee_code }})? Data akun pengguna dan berkas arsip akan dihapus secara permanen.',
+                                            confirmText: 'Ya, Hapus Karyawan',
+                                            type: 'danger',
+                                            form: $el.closest('form')
+                                        })"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 bg-white transition shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 stroke-[1.75]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     </button>
                                 </form>
                             </td>

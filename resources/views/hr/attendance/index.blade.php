@@ -10,14 +10,14 @@
         <form method="GET" action="{{ route('hr.attendance.index') }}" class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-end text-xs">
             <div>
                 <label for="department_id" class="block font-bold text-slate-700 mb-1">Departemen</label>
-                <select id="department_id" name="department_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departments as $d)
-                        <option value="{{ $d->id }}" {{ request('department_id') == $d->id ? 'selected' : '' }}>
-                            {{ $d->name }} ({{ $d->code }})
-                        </option>
-                    @endforeach
-                </select>
+                <x-custom-select
+                    name="department_id"
+                    id="department_id"
+                    :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])"
+                    placeholder="Semua Departemen"
+                    :value="request('department_id')"
+                    size="sm"
+                />
             </div>
 
             <div>
@@ -34,13 +34,19 @@
 
             <div>
                 <label for="status" class="block font-bold text-slate-700 mb-1">Status Kehadiran</label>
-                <select id="status" name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Status</option>
-                    <option value="Present" {{ request('status') === 'Present' ? 'selected' : '' }}>Present (Tepat Waktu)</option>
-                    <option value="Late" {{ request('status') === 'Late' ? 'selected' : '' }}>Late (Terlambat)</option>
-                    <option value="On Leave" {{ request('status') === 'On Leave' ? 'selected' : '' }}>On Leave (Cuti / Izin)</option>
-                    <option value="Absent" {{ request('status') === 'Absent' ? 'selected' : '' }}>Absent (Alpa)</option>
-                </select>
+                <x-custom-select
+                    name="status"
+                    id="status"
+                    :options="[
+                        'Present' => 'Present (Tepat Waktu)',
+                        'Late' => 'Late (Terlambat)',
+                        'On Leave' => 'On Leave (Cuti / Izin)',
+                        'Absent' => 'Absent (Alpa)'
+                    ]"
+                    placeholder="Semua Status"
+                    :value="request('status')"
+                    size="sm"
+                />
             </div>
 
             <div>
@@ -186,13 +192,14 @@
 
                         <div>
                             <label for="modal_status" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Status Kehadiran</label>
-                            <select id="modal_status" name="status" x-model="status" required
-                                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="Present">Present</option>
-                                <option value="Late">Late</option>
-                                <option value="On Leave">On Leave</option>
-                                <option value="Absent">Absent</option>
-                            </select>
+                            <x-custom-select
+                                name="status"
+                                id="modal_status"
+                                :options="['Present' => 'Present', 'Late' => 'Late', 'On Leave' => 'On Leave', 'Absent' => 'Absent']"
+                                x-model="status"
+                                size="sm"
+                                required
+                            />
                         </div>
                     </div>
 

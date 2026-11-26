@@ -124,12 +124,19 @@
                                     <span>Ubah</span>
                                 </button>
 
-                                <form action="{{ route('hr.departments.destroy', $dept) }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus departemen {{ $dept->name }}?');">
+                                <form action="{{ route('hr.departments.destroy', $dept) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 transition">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <button type="button"
+                                        @click="$dispatch('open-confirm', {
+                                            title: 'Hapus Departemen',
+                                            message: 'Apakah Anda yakin ingin menghapus departemen {{ $dept->name }}? Departemen tidak dapat dihapus jika masih memiliki karyawan atau jabatan terhubung.',
+                                            confirmText: 'Ya, Hapus',
+                                            type: 'danger',
+                                            form: $el.closest('form')
+                                        })"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 transition">
+                                        <svg class="w-3.5 h-3.5 stroke-[1.75]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         <span>Hapus</span>
                                     </button>
                                 </form>

@@ -33,25 +33,12 @@
 
             <div>
                 <label for="employee_id" class="block font-bold text-slate-700 mb-1">Anggota Tim</label>
-                <select id="employee_id" name="employee_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <option value="">Semua Anggota ({{ $teamMembers->count() }})</option>
-                    @foreach($teamMembers as $m)
-                        <option value="{{ $m->id }}" {{ request('employee_id') == $m->id ? 'selected' : '' }}>
-                            {{ $m->user->name }} ({{ $m->employee_code }})
-                        </option>
-                    @endforeach
-                </select>
+                <x-custom-select id="employee_id" name="employee_id" :options="$teamMembers->map(fn($m) => ['value' => $m->id, 'label' => $m->user->name . ' (' . $m->employee_code . ')'])" placeholder="Semua Anggota ({{ $teamMembers->count() }})" :value="request('employee_id')" size="sm" />
             </div>
 
             <div>
                 <label for="status" class="block font-bold text-slate-700 mb-1">Status Kehadiran</label>
-                <select id="status" name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <option value="">Semua Status</option>
-                    <option value="Present" {{ request('status') === 'Present' ? 'selected' : '' }}>Present (Tepat Waktu)</option>
-                    <option value="Late" {{ request('status') === 'Late' ? 'selected' : '' }}>Late (Terlambat)</option>
-                    <option value="On Leave" {{ request('status') === 'On Leave' ? 'selected' : '' }}>On Leave (Cuti / Izin)</option>
-                    <option value="Absent" {{ request('status') === 'Absent' ? 'selected' : '' }}>Absent (Alpa)</option>
-                </select>
+                <x-custom-select id="status" name="status" :options="['Present' => 'Present (Tepat Waktu)', 'Late' => 'Late (Terlambat)', 'On Leave' => 'On Leave (Cuti / Izin)', 'Absent' => 'Absent (Alpa)']" placeholder="Semua Status" :value="request('status')" size="sm" />
             </div>
 
             <div class="sm:col-span-4 flex items-center justify-end gap-2 pt-2 border-t border-slate-100">

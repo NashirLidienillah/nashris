@@ -29,99 +29,14 @@
 
     <!-- 4 Core KPI Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <x-stat-card title="Total Karyawan Aktif" :value="$stats['total_employees']" icon="👥" color="indigo" subtitle="Seluruh departemen" />
-        <x-stat-card title="Tingkat Presensi Hari Ini" :value="$stats['attendance_rate'] . '%'" icon="⏱️" color="emerald" subtitle="{{ $stats['attendance_today'] }} dari {{ $stats['total_employees'] }} hadir" />
-        <x-stat-card title="Review Cuti Menunggu HR" :value="$stats['pending_leaves']" icon="📑" color="amber" subtitle="Verifikasi tahap akhir" />
-        <x-stat-card title="Estimasi Payroll Bulanan" :value="'Rp ' . number_format($stats['monthly_payroll_estimate'] / 1000000, 1, ',', '.') . ' Jt'" icon="🏦" color="sky" subtitle="Gaji pokok + tunjangan tetap" />
+        <x-stat-card title="Total Karyawan Aktif" :value="$stats['total_employees']" icon="users" color="indigo" subtitle="Seluruh departemen" />
+        <x-stat-card title="Tingkat Presensi Hari Ini" :value="$stats['attendance_rate'] . '%'" icon="clock" color="emerald" subtitle="{{ $stats['attendance_today'] }} dari {{ $stats['total_employees'] }} hadir" />
+        <x-stat-card title="Review Cuti Menunggu HR" :value="$stats['pending_leaves']" icon="document-text" color="amber" subtitle="Verifikasi tahap akhir" />
+        <x-stat-card title="Estimasi Payroll Bulanan" :value="'Rp ' . number_format($stats['monthly_payroll_estimate'] / 1000000, 1, ',', '.') . ' Jt'" icon="banknotes" color="sky" subtitle="Gaji pokok + tunjangan tetap" />
     </div>
 
     <!-- Visual Charts Grid (Chart.js) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8"
-         x-data="{
-             initCharts() {
-                 if (typeof Chart === 'undefined') {
-                     window.addEventListener('chart-loaded', () => this.initCharts(), { once: true });
-                     return;
-                 }
-
-                 // 1. Department Distribution Doughnut
-                 const ctxDept = document.getElementById('deptChart');
-                 if (ctxDept) {
-                     new Chart(ctxDept, {
-                         type: 'doughnut',
-                         data: {
-                             labels: {{ json_encode($deptLabels) }},
-                             datasets: [{
-                                 data: {{ json_encode($deptCounts) }},
-                                 backgroundColor: ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'],
-                                 borderWidth: 2,
-                                 borderColor: '#ffffff',
-                             }]
-                         },
-                         options: {
-                             responsive: true,
-                             maintainAspectRatio: false,
-                             plugins: {
-                                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
-                             },
-                             cutout: '65%'
-                         }
-                     });
-                 }
-
-                 // 2. 6-Month Attendance & Late Trend Line Chart
-                 const ctxTrend = document.getElementById('trendChart');
-                 if (ctxTrend) {
-                     new Chart(ctxTrend, {
-                         type: 'line',
-                         data: {
-                             labels: {{ json_encode($trendLabels) }},
-                             datasets: [
-                                 {
-                                     label: 'Hadir (Present)',
-                                     data: {{ json_encode($trendPresent) }},
-                                     borderColor: '#10b981',
-                                     backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                                     fill: true,
-                                     tension: 0.35,
-                                     borderWidth: 2,
-                                 },
-                                 {
-                                     label: 'Terlambat (Late)',
-                                     data: {{ json_encode($trendLate) }},
-                                     borderColor: '#f59e0b',
-                                     backgroundColor: 'rgba(245, 158, 11, 0.08)',
-                                     fill: true,
-                                     tension: 0.35,
-                                     borderWidth: 2,
-                                 },
-                                 {
-                                     label: 'Alpa (Absent)',
-                                     data: {{ json_encode($trendAbsent) }},
-                                     borderColor: '#ef4444',
-                                     backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                                     fill: true,
-                                     tension: 0.35,
-                                     borderWidth: 2,
-                                 }
-                             ]
-                         },
-                         options: {
-                             responsive: true,
-                             maintainAspectRatio: false,
-                             plugins: {
-                                 legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
-                             },
-                             scales: {
-                                 y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
-                                 x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-                             }
-                         }
-                     });
-                 }
-             }
-         }"
-         x-init="initCharts()">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
 
         <!-- 6-Month Attendance & Late Trend (2 cols) -->
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-xs p-6 flex flex-col justify-between">
@@ -259,6 +174,96 @@
     </div>
 
     @push('scripts')
-        @vite('resources/js/chart.js')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            function initHrDashboardCharts() {
+                if (typeof Chart === 'undefined') {
+                    setTimeout(initHrDashboardCharts, 50);
+                    return;
+                }
+
+                // 1. Department Distribution Doughnut
+                const ctxDept = document.getElementById('deptChart');
+                if (ctxDept && !ctxDept.chartInstance) {
+                    ctxDept.chartInstance = new Chart(ctxDept, {
+                        type: 'doughnut',
+                        data: {
+                            labels: {!! json_encode($deptLabels) !!},
+                            datasets: [{
+                                data: {!! json_encode($deptCounts) !!},
+                                backgroundColor: ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'],
+                                borderWidth: 2,
+                                borderColor: '#ffffff',
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                            },
+                            cutout: '65%'
+                        }
+                    });
+                }
+
+                // 2. 6-Month Attendance & Late Trend Line Chart
+                const ctxTrend = document.getElementById('trendChart');
+                if (ctxTrend && !ctxTrend.chartInstance) {
+                    ctxTrend.chartInstance = new Chart(ctxTrend, {
+                        type: 'line',
+                        data: {
+                            labels: {!! json_encode($trendLabels) !!},
+                            datasets: [
+                                {
+                                    label: 'Hadir (Present)',
+                                    data: {!! json_encode($trendPresent) !!},
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 2,
+                                },
+                                {
+                                    label: 'Terlambat (Late)',
+                                    data: {!! json_encode($trendLate) !!},
+                                    borderColor: '#f59e0b',
+                                    backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 2,
+                                },
+                                {
+                                    label: 'Alpa (Absent)',
+                                    data: {!! json_encode($trendAbsent) !!},
+                                    borderColor: '#ef4444',
+                                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 2,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+                                x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                window.addEventListener('DOMContentLoaded', initHrDashboardCharts);
+            } else {
+                initHrDashboardCharts();
+            }
+        </script>
     @endpush
 </x-app-layout>

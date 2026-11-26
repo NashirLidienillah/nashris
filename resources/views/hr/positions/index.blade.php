@@ -16,15 +16,9 @@
     }">
         <!-- Department & Keyword Filters -->
         <form method="GET" action="{{ route('hr.positions.index') }}" class="flex flex-wrap items-center gap-3 flex-1">
-            <select name="department_id" onchange="this.form.submit()"
-                class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-2xs">
-                <option value="">Semua Departemen</option>
-                @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
-                        {{ $dept->name }} ({{ $dept->code }})
-                    </option>
-                @endforeach
-            </select>
+            <div class="w-56">
+                <x-custom-select name="department_id" :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])" placeholder="Semua Departemen" :value="request('department_id')" :submitOnChange="true" size="sm" />
+            </div>
 
             <div class="relative flex-1 max-w-xs">
                 <input type="text" name="search" value="{{ request('search') }}"
@@ -65,12 +59,7 @@
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Departemen</label>
-                            <select name="department_id" x-model="activePos.department_id" required
-                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                                @foreach($departments as $dept)
-                                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                                @endforeach
-                            </select>
+                            <x-custom-select name="department_id" :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])" x-model="activePos.department_id" required />
                         </div>
 
                         <div>
@@ -138,12 +127,19 @@
                                     <span>Ubah</span>
                                 </button>
 
-                                <form action="{{ route('hr.positions.destroy', $pos) }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus jabatan {{ $pos->title }}?');">
+                                <form action="{{ route('hr.positions.destroy', $pos) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 transition">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <button type="button"
+                                        @click="$dispatch('open-confirm', {
+                                            title: 'Hapus Jabatan',
+                                            message: 'Apakah Anda yakin ingin menghapus jabatan {{ $pos->title }}? Jabatan tidak dapat dihapus jika sedang diemban oleh karyawan aktif.',
+                                            confirmText: 'Ya, Hapus',
+                                            type: 'danger',
+                                            form: $el.closest('form')
+                                        })"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-rose-600 transition">
+                                        <svg class="w-3.5 h-3.5 stroke-[1.75]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         <span>Hapus</span>
                                     </button>
                                 </form>
@@ -173,15 +169,7 @@
             @csrf
             <div>
                 <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Departemen Terkait</label>
-                <select name="department_id" required
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                    <option value="">Pilih Departemen...</option>
-                    @foreach($departments as $dept)
-                        <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>
-                            {{ $dept->name }} ({{ $dept->code }})
-                        </option>
-                    @endforeach
-                </select>
+                <x-custom-select name="department_id" :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])" placeholder="Pilih Departemen..." :value="old('department_id')" required />
             </div>
 
             <div>

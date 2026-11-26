@@ -22,24 +22,30 @@
         <form method="GET" action="{{ route('hr.audit-logs.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end text-xs">
             <div>
                 <label for="log_name" class="block font-bold text-slate-700 mb-1">Kategori Modul</label>
-                <select id="log_name" name="log_name" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Modul</option>
-                    @foreach($logNames as $name)
-                        <option value="{{ $name }}" {{ request('log_name') === $name ? 'selected' : '' }}>
-                            {{ ucfirst(str_replace('_', ' ', $name)) }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-custom-select
+                    name="log_name"
+                    id="log_name"
+                    :options="$logNames->mapWithKeys(fn($name) => [$name => ucfirst(str_replace('_', ' ', $name))])"
+                    placeholder="Semua Modul"
+                    :value="request('log_name')"
+                    size="sm"
+                />
             </div>
 
             <div>
                 <label for="event" class="block font-bold text-slate-700 mb-1">Jenis Aksi</label>
-                <select id="event" name="event" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Aksi</option>
-                    <option value="created" {{ request('event') === 'created' ? 'selected' : '' }}>Created (Penambahan)</option>
-                    <option value="updated" {{ request('event') === 'updated' ? 'selected' : '' }}>Updated (Perubahan)</option>
-                    <option value="deleted" {{ request('event') === 'deleted' ? 'selected' : '' }}>Deleted (Penghapusan)</option>
-                </select>
+                <x-custom-select
+                    name="event"
+                    id="event"
+                    :options="[
+                        'created' => 'Created (Penambahan)',
+                        'updated' => 'Updated (Perubahan)',
+                        'deleted' => 'Deleted (Penghapusan)'
+                    ]"
+                    placeholder="Semua Aksi"
+                    :value="request('event')"
+                    size="sm"
+                />
             </div>
 
             <div>

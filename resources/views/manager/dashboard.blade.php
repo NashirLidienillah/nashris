@@ -18,9 +18,9 @@
 
     <!-- Summary KPI -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-        <x-stat-card title="Anggota Tim" :value="$stats['team_members']" icon="👥" color="amber" subtitle="Karyawan bawahan langsung" />
-        <x-stat-card title="Hadir Hari Ini" :value="$stats['team_present_today']" icon="⏱️" color="emerald" subtitle="Presensi tercatat" />
-        <x-stat-card title="Menunggu Review Cuti" :value="$stats['pending_approval']" icon="📑" color="rose" subtitle="Persetujuan Tahap 1" />
+        <x-stat-card title="Anggota Tim" :value="$stats['team_members']" icon="users" color="amber" subtitle="Karyawan bawahan langsung" />
+        <x-stat-card title="Hadir Hari Ini" :value="$stats['team_present_today']" icon="clock" color="emerald" subtitle="Presensi tercatat" />
+        <x-stat-card title="Menunggu Review Cuti" :value="$stats['pending_approval']" icon="document-text" color="rose" subtitle="Persetujuan Tahap 1" />
     </div>
 
     <!-- Pending Leave Approvals for Team -->

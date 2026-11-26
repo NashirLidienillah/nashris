@@ -82,10 +82,10 @@
 
         <!-- Month Summary Cards (2 cols) -->
         <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <x-stat-card title="Hadir Tepat Waktu" :value="$summary['present']" icon="✅" color="emerald" subtitle="Hari bulan ini" />
-            <x-stat-card title="Keterlambatan" :value="$summary['late']" icon="⚠️" color="amber" subtitle="{{ $summary['late_minutes'] }} total menit" />
-            <x-stat-card title="Cuti / Izin" :value="$summary['on_leave']" icon="🏖️" color="sky" subtitle="Hari disetujui" />
-            <x-stat-card title="Tanpa Keterangan" :value="$summary['absent']" icon="❌" color="rose" subtitle="Hari alpa" />
+            <x-stat-card title="Hadir Tepat Waktu" :value="$summary['present']" icon="check-circle" color="emerald" subtitle="Hari bulan ini" />
+            <x-stat-card title="Keterlambatan" :value="$summary['late']" icon="exclamation-triangle" color="amber" subtitle="{{ $summary['late_minutes'] }} total menit" />
+            <x-stat-card title="Cuti / Izin" :value="$summary['on_leave']" icon="sun" color="sky" subtitle="Hari disetujui" />
+            <x-stat-card title="Tanpa Keterangan" :value="$summary['absent']" icon="x-circle" color="rose" subtitle="Hari alpa" />
         </div>
     </div>
 

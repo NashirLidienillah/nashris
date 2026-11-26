@@ -37,13 +37,16 @@
                     @csrf
                     <div>
                         <label for="month" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Bulan Penggajian <span class="text-rose-500">*</span></label>
-                        <select id="month" name="month" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
-                                    {{ \Carbon\Carbon::create(2026, $m, 1)->translatedFormat('F') }}
-                                </option>
-                            @endfor
-                        </select>
+                        @php
+                            $monthOptions = [];
+                            for ($m = 1; $m <= 12; $m++) {
+                                $monthOptions[] = [
+                                    'value' => (string) $m,
+                                    'label' => \Carbon\Carbon::create(2026, $m, 1)->translatedFormat('F')
+                                ];
+                            }
+                        @endphp
+                        <x-custom-select id="month" name="month" :options="$monthOptions" :value="date('n')" required />
                     </div>
 
                     <div>

@@ -48,16 +48,20 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Peran Akun Sistem (Role)</label>
-                        <select name="role" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            @php
-                                $userRole = old('role', $employee->user->roles->first()?->name ?? 'employee');
-                            @endphp
-                            <option value="employee" {{ $userRole === 'employee' ? 'selected' : '' }}>Employee (Staf Biasa / Akses ESS)</option>
-                            <option value="manager" {{ $userRole === 'manager' ? 'selected' : '' }}>Manager (Supervisi Divisi / Approval Cuti & Presensi)</option>
-                            <option value="hr" {{ $userRole === 'hr' ? 'selected' : '' }}>HR Administrator (Akses Penuh)</option>
-                        </select>
-                        <span class="block text-[10px] text-slate-400 mt-0.5">Ubah ke <strong>Manager</strong> untuk mengangkat karyawan menjadi supervisor yang dapat mereview cuti timnya.</span>
+                        @php
+                            $userRole = old('role', $employee->user->roles->first()?->name ?? 'employee');
+                        @endphp
+                        <x-custom-select
+                            name="role"
+                            :options="[
+                                'employee' => 'Employee (Staf Biasa / Akses ESS)',
+                                'manager' => 'Manager (Supervisi Divisi / Approval Cuti & Presensi)',
+                                'hr' => 'HR Administrator (Akses Penuh)'
+                            ]"
+                            :value="$userRole"
+                            required
+                        />
+                        <span class="block text-[10px] text-slate-400 mt-1">Ubah ke <strong>Manager</strong> untuk mengangkat karyawan menjadi supervisor yang dapat mereview cuti timnya.</span>
                     </div>
 
                     <div class="md:col-span-2">
@@ -84,51 +88,42 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Departemen</label>
-                        <select name="department_id" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept->id }}" {{ old('department_id', $employee->department_id) == $dept->id ? 'selected' : '' }}>
-                                    {{ $dept->name }} ({{ $dept->code }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-custom-select
+                            name="department_id"
+                            :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])"
+                            :value="old('department_id', $employee->department_id)"
+                            required
+                        />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Jabatan / Role</label>
-                        <select name="position_id" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            @foreach($positions as $pos)
-                                <option value="{{ $pos->id }}" {{ old('position_id', $employee->position_id) == $pos->id ? 'selected' : '' }}>
-                                    {{ $pos->title }} ({{ $pos->department->code ?? '-' }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-custom-select
+                            name="position_id"
+                            :options="$positions->map(fn($p) => ['value' => $p->id, 'label' => $p->title . ' (' . ($p->department->code ?? '-') . ')'])"
+                            :value="old('position_id', $employee->position_id)"
+                            required
+                        />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Shift Kerja</label>
-                        <select name="shift_id" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}" {{ old('shift_id', $employee->shift_id) == $shift->id ? 'selected' : '' }}>
-                                    {{ $shift->name }} ({{ $shift->start_time }} - {{ $shift->end_time }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-custom-select
+                            name="shift_id"
+                            :options="$shifts->map(fn($s) => ['value' => $s->id, 'label' => $s->name . ' (' . $s->start_time . ' - ' . $s->end_time . ')'])"
+                            :value="old('shift_id', $employee->shift_id)"
+                            required
+                        />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Atasan Langsung (Manager)</label>
-                        <select name="manager_id"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            <option value="">Tanpa Atasan Langsung</option>
-                            @foreach($managers as $mgr)
-                                <option value="{{ $mgr->id }}" {{ old('manager_id', $employee->manager_id) == $mgr->id ? 'selected' : '' }}>
-                                    {{ $mgr->user->name ?? 'Staff' }} - {{ $mgr->department->name ?? '' }} ({{ $mgr->employee_code }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-custom-select
+                            name="manager_id"
+                            :options="$managers->map(fn($m) => ['value' => $m->id, 'label' => ($m->user->name ?? 'Staff') . ' - ' . ($m->department->name ?? '') . ' (' . $m->employee_code . ')'])"
+                            placeholder="Tanpa Atasan Langsung"
+                            :value="old('manager_id', $employee->manager_id)"
+                        />
                     </div>
                 </div>
             </div>
@@ -149,13 +144,17 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tipe Kontrak Kerja</label>
-                        <select name="contract_type" x-model="contractType" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                            <option value="PKWTT">PKWTT (Karyawan Tetap)</option>
-                            <option value="PKWT">PKWT (Karyawan Kontrak)</option>
-                            <option value="Probation">Probation (Masa Percobaan)</option>
-                            <option value="Internship">Internship (Magang)</option>
-                        </select>
+                        <x-custom-select
+                            name="contract_type"
+                            :options="[
+                                'PKWTT' => 'PKWTT (Karyawan Tetap)',
+                                'PKWT' => 'PKWT (Karyawan Kontrak)',
+                                'Probation' => 'Probation (Masa Percobaan)',
+                                'Internship' => 'Internship (Magang)'
+                            ]"
+                            x-model="contractType"
+                            required
+                        />
                     </div>
 
                     <div x-show="contractType !== 'PKWTT'" x-cloak>

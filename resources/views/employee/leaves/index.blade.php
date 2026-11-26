@@ -7,9 +7,9 @@
 
     <!-- Top Grid: Leave Balance Cards & Quick Action -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <x-stat-card title="Total Kuota Cuti" :value="$leaveBalance->total_quota . ' Hari'" icon="🗓️" color="indigo" subtitle="Tahun {{ date('Y') }}" />
-        <x-stat-card title="Cuti Terpakai" :value="$leaveBalance->used_quota . ' Hari'" icon="📉" color="amber" subtitle="Telah disetujui HR" />
-        <x-stat-card title="Sisa Saldo Cuti" :value="$leaveBalance->remaining_quota . ' Hari'" icon="🏖️" color="emerald" subtitle="Dapat diajukan" />
+        <x-stat-card title="Total Kuota Cuti" :value="$leaveBalance->total_quota . ' Hari'" icon="calendar" color="indigo" subtitle="Tahun {{ date('Y') }}" />
+        <x-stat-card title="Cuti Terpakai" :value="$leaveBalance->used_quota . ' Hari'" icon="trending-down" color="amber" subtitle="Telah disetujui HR" />
+        <x-stat-card title="Sisa Saldo Cuti" :value="$leaveBalance->remaining_quota . ' Hari'" icon="sun" color="emerald" subtitle="Dapat diajukan" />
 
         <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white flex flex-col justify-between shadow-xs">
             <div>

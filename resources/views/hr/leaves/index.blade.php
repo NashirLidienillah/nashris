@@ -10,35 +10,47 @@
         <form method="GET" action="{{ route('hr.leaves.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end text-xs">
             <div>
                 <label for="status" class="block font-bold text-slate-700 mb-1">Status Pengajuan</label>
-                <select id="status" name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="Pending HR" {{ request('status', 'Pending HR') === 'Pending HR' ? 'selected' : '' }}>Pending HR (Menunggu Verifikasi Akhir)</option>
-                    <option value="Approved" {{ request('status') === 'Approved' ? 'selected' : '' }}>Approved (Disetujui)</option>
-                    <option value="Rejected" {{ request('status') === 'Rejected' ? 'selected' : '' }}>Rejected (Ditolak)</option>
-                    <option value="Pending Manager" {{ request('status') === 'Pending Manager' ? 'selected' : '' }}>Pending Manager (Menunggu Tahap 1)</option>
-                    <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>Semua Status</option>
-                </select>
+                <x-custom-select
+                    name="status"
+                    id="status"
+                    :options="[
+                        'Pending HR' => 'Pending HR (Menunggu Verifikasi Akhir)',
+                        'Approved' => 'Approved (Disetujui)',
+                        'Rejected' => 'Rejected (Ditolak)',
+                        'Pending Manager' => 'Pending Manager (Menunggu Tahap 1)',
+                        'all' => 'Semua Status'
+                    ]"
+                    :value="request('status', 'Pending HR')"
+                    size="sm"
+                />
             </div>
 
             <div>
                 <label for="department_id" class="block font-bold text-slate-700 mb-1">Departemen</label>
-                <select id="department_id" name="department_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departments as $d)
-                        <option value="{{ $d->id }}" {{ request('department_id') == $d->id ? 'selected' : '' }}>
-                            {{ $d->name }} ({{ $d->code }})
-                        </option>
-                    @endforeach
-                </select>
+                <x-custom-select
+                    name="department_id"
+                    id="department_id"
+                    :options="$departments->map(fn($d) => ['value' => $d->id, 'label' => $d->name . ' (' . $d->code . ')'])"
+                    placeholder="Semua Departemen"
+                    :value="request('department_id')"
+                    size="sm"
+                />
             </div>
 
             <div>
                 <label for="leave_type" class="block font-bold text-slate-700 mb-1">Jenis Cuti</label>
-                <select id="leave_type" name="leave_type" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Jenis</option>
-                    <option value="Annual" {{ request('leave_type') === 'Annual' ? 'selected' : '' }}>Annual (Tahunan)</option>
-                    <option value="Sick" {{ request('leave_type') === 'Sick' ? 'selected' : '' }}>Sick (Sakit)</option>
-                    <option value="Special" {{ request('leave_type') === 'Special' ? 'selected' : '' }}>Special (Khusus)</option>
-                </select>
+                <x-custom-select
+                    name="leave_type"
+                    id="leave_type"
+                    :options="[
+                        'Annual' => 'Annual (Tahunan)',
+                        'Sick' => 'Sick (Sakit)',
+                        'Special' => 'Special (Khusus)'
+                    ]"
+                    placeholder="Semua Jenis"
+                    :value="request('leave_type')"
+                    size="sm"
+                />
             </div>
 
             <div class="flex items-center gap-2">

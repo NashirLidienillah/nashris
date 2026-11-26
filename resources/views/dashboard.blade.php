@@ -68,8 +68,8 @@
         <!-- Role Access Information Grid -->
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-lg mb-4">
-                    🛡️
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold mb-4">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
                 </div>
                 <h3 class="text-sm font-bold text-slate-900">Peran & Otorisasi</h3>
                 <p class="mt-1 text-xs text-slate-600 leading-relaxed">
@@ -81,8 +81,8 @@
             </div>
 
             <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 font-bold text-lg mb-4">
-                    🏢
+                <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 font-bold mb-4">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>
                 </div>
                 <h3 class="text-sm font-bold text-slate-900">Data Master & Karyawan</h3>
                 <p class="mt-1 text-xs text-slate-600 leading-relaxed">
@@ -94,8 +94,8 @@
             </div>
 
             <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-lg mb-4">
-                    ⚡
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold mb-4">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
                 </div>
                 <h3 class="text-sm font-bold text-slate-900">Langkah Berikutnya (Phase 3)</h3>
                 <p class="mt-1 text-xs text-slate-600 leading-relaxed">

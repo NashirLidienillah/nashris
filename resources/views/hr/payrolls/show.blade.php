@@ -24,11 +24,18 @@
 
         <div class="flex items-center gap-3">
             @if($payroll->status === 'Draft')
-                <form action="{{ route('hr.payrolls.finalize', $payroll) }}" method="POST"
-                      onsubmit="return confirm('Apakah Anda yakin ingin memfinalisasi payroll ini menjadi Paid? Setelah Paid, karyawan dapat melihat dan mengunduh slip gaji mereka.')">
+                <form action="{{ route('hr.payrolls.finalize', $payroll) }}" method="POST">
                     @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition active:scale-95">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    <button type="button"
+                        @click="$dispatch('open-confirm', {
+                            title: 'Finalisasi Pembayaran Payroll',
+                            message: 'Apakah Anda yakin ingin memfinalisasi payroll periode ini menjadi Paid? Setelah Paid, slip gaji resmi akan langsung didistribusikan ke masing-masing akun karyawan.',
+                            confirmText: 'Ya, Finalisasi & Bayar',
+                            type: 'success',
+                            form: $el.closest('form')
+                        })"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition active:scale-95">
+                        <svg class="w-4 h-4 stroke-[2]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                         <span>Finalisasi Pembayaran (Mark as Paid)</span>
                     </button>
                 </form>
@@ -43,24 +50,19 @@
 
     <!-- Summary KPI Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-        <x-stat-card title="Total Penerimaan Kotor" :value="'Rp ' . number_format($totals['gross'], 0, ',', '.')" icon="💰" color="indigo" subtitle="Gaji pokok + tunjangan" />
-        <x-stat-card title="Potongan Terlambat" :value="'Rp ' . number_format($totals['late'], 0, ',', '.')" icon="⏱️" color="amber" subtitle="Total denda menit telat" />
-        <x-stat-card title="Potongan Alpa" :value="'Rp ' . number_format($totals['absence'], 0, ',', '.')" icon="❌" color="rose" subtitle="Total denda ketidakhadiran" />
-        <x-stat-card title="Total Pengeluaran Bersih" :value="'Rp ' . number_format($totals['net'], 0, ',', '.')" icon="🏦" color="emerald" subtitle="Take home pay seluruh staf" />
+        <x-stat-card title="Total Penerimaan Kotor" :value="'Rp ' . number_format($totals['gross'], 0, ',', '.')" icon="banknotes" color="indigo" subtitle="Gaji pokok + tunjangan" />
+        <x-stat-card title="Potongan Terlambat" :value="'Rp ' . number_format($totals['late'], 0, ',', '.')" icon="clock" color="amber" subtitle="Total denda menit telat" />
+        <x-stat-card title="Potongan Alpa" :value="'Rp ' . number_format($totals['absence'], 0, ',', '.')" icon="x-circle" color="rose" subtitle="Total denda ketidakhadiran" />
+        <x-stat-card title="Total Pengeluaran Bersih" :value="'Rp ' . number_format($totals['net'], 0, ',', '.')" icon="banknotes" color="emerald" subtitle="Take home pay seluruh staf" />
     </div>
 
     <!-- Filter & Search Bar -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-6">
         <form method="GET" action="{{ route('hr.payrolls.show', $payroll) }}" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div class="flex items-center gap-3 flex-1">
-                <select name="department_id" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departments as $d)
-                        <option value="{{ $d->id }}" {{ request('department_id') == $d->id ? 'selected' : '' }}>
-                            {{ $d->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <div class="w-52">
+                    <x-custom-select name="department_id" :options="$departments" valueKey="id" labelKey="name" placeholder="Semua Departemen" :value="request('department_id')" size="sm" />
+                </div>
 
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama / kode karyawan..."
                        class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
